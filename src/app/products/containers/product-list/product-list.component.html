@@ -2,5 +2,6 @@
   <app-product-card
     *ngFor="let product of vm.products; trackBy: trackById"
     [product]="product"
+    (click)="onClick(product)"
   />
 </div>

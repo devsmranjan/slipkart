@@ -12,7 +12,13 @@ export const PRODUCT_ROUTES: Route[] = [
           import('./containers/product-list/product-list.component').then(
             (c) => c.ProductListComponent
           ),
-        outlet: 'products',
+      },
+      {
+        path: ':id',
+        loadComponent: () =>
+          import('./containers/product-details/product-details.component').then(
+            (c) => c.ProductDetailsComponent
+          ),
       },
     ],
   },
