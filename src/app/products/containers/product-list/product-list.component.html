@@ -1,7 +1,20 @@
 <div *ngIf="vm$ | async as vm" class="products">
-  <app-product-card
-    *ngFor="let product of vm.products; trackBy: trackById"
-    [product]="product"
-    (click)="onClick(product)"
-  />
+  <ng-container *ngIf="vm.products; else placeholder">
+    <ng-container *ngIf="vm.products.length > 0; else noData">
+      <app-product-card
+        *ngFor="let product of vm.products; trackBy: trackById"
+        [product]="product"
+        (click)="onClick(product)"
+      />
+    </ng-container>
+
+    <ng-template #noData>
+      <p>No products, yet.</p>
+    </ng-template>
+  </ng-container>
+
+  <ng-template #placeholder>
+    <p *ngIf="vm.loading">Loading...</p>
+    <p *ngIf="vm.error">Error : {{ vm.error }}</p>
+  </ng-template>
 </div>

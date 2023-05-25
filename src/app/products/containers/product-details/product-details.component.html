@@ -1,9 +1,16 @@
 <div *ngIf="vm$ | async as vm">
-  <img [src]="vm.product?.thumbnail" [alt]="vm.product?.title" />
-  <p>{{ vm.product?.title }}</p>
-  <p>{{ vm.product?.price }}</p>
-  <p>{{ vm.product?.description }}</p>
-  <p>{{ vm.product?.category }}</p>
+  <div *ngIf="vm.product; else placeholder">
+    <img [src]="vm.product.thumbnail" [alt]="vm.product.title" />
+    <p>{{ vm.product.title }}</p>
+    <p>{{ vm.product.price }}</p>
+    <p>{{ vm.product.description }}</p>
+    <p>{{ vm.product.category }}</p>
 
-  <button>Add to cart</button>
+    <button>Add to cart</button>
+  </div>
+
+  <ng-template #placeholder>
+    <p *ngIf="vm.loading">Loading...</p>
+    <p *ngIf="vm.error">Error : {{ vm.error }}</p>
+  </ng-template>
 </div>
