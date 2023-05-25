@@ -1,0 +1,6 @@
+<div *ngIf="vm$ | async as vm" class="products">
+  <app-product-card
+    *ngFor="let product of vm.products; trackBy: trackById"
+    [product]="product"
+  />
+</div>
