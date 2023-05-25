@@ -1,1 +1,9 @@
-<p>product-details works! {{ id }}</p>
+<div *ngIf="vm$ | async as vm">
+  <img [src]="vm.product?.thumbnail" [alt]="vm.product?.title" />
+  <p>{{ vm.product?.title }}</p>
+  <p>{{ vm.product?.price }}</p>
+  <p>{{ vm.product?.description }}</p>
+  <p>{{ vm.product?.category }}</p>
+
+  <button>Add to cart</button>
+</div>

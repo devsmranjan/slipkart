@@ -1,13 +1,36 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { HttpClientModule } from '@angular/common/http';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  inject,
+} from '@angular/core';
+import { ProductService } from '../../product.service';
+import { ProductDetailsStore } from './product-details.store';
 
 @Component({
   selector: 'app-product-details',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, HttpClientModule],
   templateUrl: './product-details.component.html',
   styleUrls: ['./product-details.component.scss'],
+  providers: [ProductDetailsStore, ProductService],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProductDetailsComponent {
-  @Input() id!: number | string;
+  // injects
+  #productDetailsStore = inject(ProductDetailsStore);
+
+  // setters
+  @Input() set id(id: string) {
+    this.loadProduct(id);
+  }
+
+  vm$ = this.#productDetailsStore.vm$;
+
+  // dispatchers
+  loadProduct(id: string) {
+    this.#productDetailsStore.loadProduct(id);
+  }
 }

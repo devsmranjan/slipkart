@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { ProductResponseInterface } from './models';
+import { ProductInterface, ProductResponseInterface } from './models';
 
 @Injectable({
   providedIn: 'root',
@@ -15,6 +15,12 @@ export class ProductService {
   getProducts(limit: number, skip: number) {
     return this.#http.get<ProductResponseInterface>(
       `${this.#SERVER_URL}/products?limit=${limit}&skip=${skip}`
+    );
+  }
+
+  getProduct(id: number | string) {
+    return this.#http.get<ProductInterface>(
+      `${this.#SERVER_URL}/products/${id}`
     );
   }
 }
