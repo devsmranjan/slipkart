@@ -10,7 +10,21 @@
       {{ product.price | currency }}
     </div>
     <div class="card__actions">
-      <button class="btn btn--primary">Add to cart</button>
+      <button
+        *ngIf="!addedToCart"
+        class="btn btn--primary"
+        (click)="onClickAddToCart($event)"
+      >
+        Add to cart
+      </button>
+
+      <button
+        *ngIf="addedToCart"
+        class="btn btn--primary"
+        (click)="onClickRemoveFromCart($event)"
+      >
+        Remove from cart
+      </button>
     </div>
   </div>
 </div>

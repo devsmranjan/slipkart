@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 
+import { CartStore } from '../../../shared/store/cart.store';
 import { ProductCardComponent } from '../../components/product-card/product-card.component';
 import { ProductInterface } from '../../models';
 import { ProductService } from '../../product.service';
@@ -25,10 +26,12 @@ import { ProductListStore } from './product-list.store';
 export class ProductListComponent implements OnInit {
   // injects
   #productListStore = inject(ProductListStore);
+  #cartStore = inject(CartStore);
   #router = inject(Router);
 
   // view models
-  readonly vm$ = this.#productListStore.vm$;
+  readonly productListVm$ = this.#productListStore.vm$;
+  readonly cartVm$ = this.#cartStore.vm$;
 
   ngOnInit(): void {
     this.#productListStore.loadProducts({ limit: 10, skip: 0 });
@@ -40,5 +43,13 @@ export class ProductListComponent implements OnInit {
 
   onClick(product: ProductInterface) {
     this.#router.navigate(['products', product.id]);
+  }
+
+  onClickAddToCart(product: ProductInterface) {
+    this.#cartStore.addProductToCart(product);
+  }
+
+  onClickRemoveFromCart(product: ProductInterface) {
+    this.#cartStore.removeProductFromCart(product.id);
   }
 }

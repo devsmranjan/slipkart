@@ -6,6 +6,8 @@ import {
   Input,
   inject,
 } from '@angular/core';
+import { CartStore } from '../../../shared/store/cart.store';
+import { ProductInterface } from '../../models';
 import { ProductService } from '../../product.service';
 import { ProductDetailsStore } from './product-details.store';
 
@@ -21,16 +23,26 @@ import { ProductDetailsStore } from './product-details.store';
 export class ProductDetailsComponent {
   // injects
   #productDetailsStore = inject(ProductDetailsStore);
+  #cartStore = inject(CartStore);
 
   // setters
   @Input() set id(id: string) {
     this.loadProduct(id);
   }
 
-  vm$ = this.#productDetailsStore.vm$;
+  productDetailsVm$ = this.#productDetailsStore.vm$;
+  cartVm$ = this.#cartStore.vm$;
 
   // dispatchers
   loadProduct(id: string) {
     this.#productDetailsStore.loadProduct(id);
+  }
+
+  onClickAddToCart(product: ProductInterface) {
+    this.#cartStore.addProductToCart(product);
+  }
+
+  onClickRemoveFromCart(product: ProductInterface) {
+    this.#cartStore.removeProductFromCart(product.id);
   }
 }

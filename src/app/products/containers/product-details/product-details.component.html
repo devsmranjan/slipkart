@@ -1,16 +1,35 @@
-<div *ngIf="vm$ | async as vm">
-  <div *ngIf="vm.product; else placeholder">
-    <img [src]="vm.product.thumbnail" [alt]="vm.product.title" />
-    <p>{{ vm.product.title }}</p>
-    <p>{{ vm.product.price }}</p>
-    <p>{{ vm.product.description }}</p>
-    <p>{{ vm.product.category }}</p>
+<div *ngIf="productDetailsVm$ | async as productDetails">
+  <div *ngIf="productDetails.product; else placeholder">
+    <img
+      [src]="productDetails.product.thumbnail"
+      [alt]="productDetails.product.title"
+    />
+    <p>{{ productDetails.product.title }}</p>
+    <p>{{ productDetails.product.price }}</p>
+    <p>{{ productDetails.product.description }}</p>
+    <p>{{ productDetails.product.category }}</p>
 
-    <button>Add to cart</button>
+    <ng-container *ngIf="cartVm$ | async as cartVm">
+      <button
+        *ngIf="!cartVm.hasProduct(productDetails.product)"
+        class="btn btn--primary"
+        (click)="onClickAddToCart(productDetails.product)"
+      >
+        Add to cart
+      </button>
+
+      <button
+        *ngIf="cartVm.hasProduct(productDetails.product)"
+        class="btn btn--primary"
+        (click)="onClickRemoveFromCart(productDetails.product)"
+      >
+        Remove from cart
+      </button>
+    </ng-container>
   </div>
 
   <ng-template #placeholder>
-    <p *ngIf="vm.loading">Loading...</p>
-    <p *ngIf="vm.error">Error : {{ vm.error }}</p>
+    <p *ngIf="productDetails.loading">Loading...</p>
+    <p *ngIf="productDetails.error">Error : {{ productDetails.error }}</p>
   </ng-template>
 </div>
