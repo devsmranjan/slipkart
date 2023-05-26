@@ -33,4 +33,8 @@ export class CartItemListComponent {
       quantity: item.quantity - 1,
     });
   }
+
+  trackById(index: number, item: CartInterface) {
+    return item.id;
+  }
 }

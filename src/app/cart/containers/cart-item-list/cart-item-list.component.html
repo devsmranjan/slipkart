@@ -1,6 +1,6 @@
 <div *ngIf="cartVm$ | async as cartVm">
   <app-cart-item
-    *ngFor="let item of cartVm.cart"
+    *ngFor="let item of cartVm.cart; trackBy: trackById"
     [item]="item"
     (increaseQuantity)="onIncreaseQuantity(item)"
     (decreaseQuantity)="onDecreaseQuantity(item)"
