@@ -1,23 +1,26 @@
-<div *ngIf="productListVm$ | async as productListVm" class="products">
-  <ng-container *ngIf="productListVm.products; else placeholder">
-    <ng-container *ngIf="productListVm.products.length > 0; else noData">
-      <app-product-card
-        *ngFor="let product of productListVm.products; trackBy: trackById"
-        [product]="product"
-        [addedToCart]="(cartVm$ | async)?.hasProduct(product) ?? false"
-        (click)="onClick(product)"
-        (clickAddToCart)="onClickAddToCart(product)"
-        (clickRemoveFromCart)="onClickRemoveFromCart(product)"
-      />
+<ng-container *ngIf="productListVm$ | async as productListVm">
+  <app-product-list-header (clickRefresh)="onClickRefresh()" />
+  <div class="products">
+    <ng-container *ngIf="productListVm.products; else placeholder">
+      <ng-container *ngIf="productListVm.products.length > 0; else noData">
+        <app-product-card
+          *ngFor="let product of productListVm.products; trackBy: trackById"
+          [product]="product"
+          [addedToCart]="(cartVm$ | async)?.hasProduct(product) ?? false"
+          (click)="onClick(product)"
+          (clickAddToCart)="onClickAddToCart(product)"
+          (clickRemoveFromCart)="onClickRemoveFromCart(product)"
+        />
+      </ng-container>
+
+      <ng-template #noData>
+        <p>No products, yet.</p>
+      </ng-template>
     </ng-container>
 
-    <ng-template #noData>
-      <p>No products, yet.</p>
+    <ng-template #placeholder>
+      <p *ngIf="productListVm.loading">Loading...</p>
+      <p *ngIf="productListVm.error">Error : {{ productListVm.error }}</p>
     </ng-template>
-  </ng-container>
-
-  <ng-template #placeholder>
-    <p *ngIf="productListVm.loading">Loading...</p>
-    <p *ngIf="productListVm.error">Error : {{ productListVm.error }}</p>
-  </ng-template>
-</div>
+  </div>
+</ng-container>

@@ -10,6 +10,7 @@ import { Router } from '@angular/router';
 
 import { CartStore } from '../../../shared/store/cart.store';
 import { ProductCardComponent } from '../../components/product-card/product-card.component';
+import { ProductListHeaderComponent } from '../../components/product-list-header/product-list-header.component';
 import { ProductInterface } from '../../models';
 import { ProductService } from '../../product.service';
 import { ProductListStore } from './product-list.store';
@@ -17,7 +18,12 @@ import { ProductListStore } from './product-list.store';
 @Component({
   selector: 'app-product-list',
   standalone: true,
-  imports: [CommonModule, ProductCardComponent, HttpClientModule],
+  imports: [
+    CommonModule,
+    ProductCardComponent,
+    HttpClientModule,
+    ProductListHeaderComponent,
+  ],
   templateUrl: './product-list.component.html',
   styleUrls: ['./product-list.component.scss'],
   providers: [ProductListStore, ProductService],
@@ -34,7 +40,11 @@ export class ProductListComponent implements OnInit {
   readonly cartVm$ = this.#cartStore.vm$;
 
   ngOnInit(): void {
-    this.#productListStore.loadProducts({ limit: 10, skip: 0 });
+    this.loadProducts();
+  }
+
+  loadProducts(limit: number = 10, skip: number = 0) {
+    this.#productListStore.loadProducts({ limit, skip });
   }
 
   trackById(index: number, product: ProductInterface) {
@@ -51,5 +61,9 @@ export class ProductListComponent implements OnInit {
 
   onClickRemoveFromCart(product: ProductInterface) {
     this.#cartStore.removeProductFromCart(product.id);
+  }
+
+  onClickRefresh() {
+    this.loadProducts();
   }
 }
