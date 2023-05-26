@@ -1,5 +1,7 @@
 <nav>
   <p>Flipkart v2</p>
 
-  <button *ngIf="cartVm$ | async as cartVm">Cart {{ cartVm.cartCount }}</button>
+  <button *ngIf="cartVm$ | async as cartVm" (click)="onCartClick()">
+    Cart {{ cartVm.cartCount }}
+  </button>
 </nav>

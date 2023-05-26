@@ -1,0 +1,14 @@
+<div class="card">
+  <div class="card__body">
+    <div class="card__image">
+      <img [src]="item.product.thumbnail" [alt]="item.product.title" />
+    </div>
+    <div class="card__title">
+      {{ item.product.title }}
+    </div>
+    <div class="card__price">
+      {{ item.product.price | currency }}
+    </div>
+    <div class="card__actions"></div>
+  </div>
+</div>
