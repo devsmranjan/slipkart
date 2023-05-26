@@ -2,6 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 import { Observable, switchMap, tap } from 'rxjs';
+import { ToastStore } from '../../../shared/store/toast.store';
 import { ProductInterface } from '../../models';
 import { ProductService } from '../../product.service';
 
@@ -20,6 +21,7 @@ export const initialProductListState: ProductListState = {
 export class ProductListStore extends ComponentStore<ProductListState> {
   // injects
   #productService = inject(ProductService);
+  #toastStore = inject(ToastStore);
 
   constructor() {
     super(initialProductListState);
@@ -83,6 +85,7 @@ export class ProductListStore extends ComponentStore<ProductListState> {
               },
               () => {
                 this.#setLoading(false);
+                this.#toastStore.hideToast();
               }
             )
           )

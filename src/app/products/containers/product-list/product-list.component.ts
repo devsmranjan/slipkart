@@ -9,6 +9,7 @@ import {
 import { Router } from '@angular/router';
 
 import { CartStore } from '../../../shared/store/cart.store';
+import { ToastStore } from '../../../shared/store/toast.store';
 import { ProductCardComponent } from '../../components/product-card/product-card.component';
 import { ProductListHeaderComponent } from '../../components/product-list-header/product-list-header.component';
 import { ProductInterface } from '../../models';
@@ -34,6 +35,7 @@ export class ProductListComponent implements OnInit {
   #productListStore = inject(ProductListStore);
   #cartStore = inject(CartStore);
   #router = inject(Router);
+  #toastStore = inject(ToastStore);
 
   // view models
   readonly productListVm$ = this.#productListStore.vm$;
@@ -64,6 +66,10 @@ export class ProductListComponent implements OnInit {
   }
 
   onClickRefresh() {
+    this.#toastStore.showToast({
+      message: 'Refreshing...',
+      type: 'info',
+    });
     this.loadProducts();
   }
 }

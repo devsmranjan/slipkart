@@ -1,0 +1,5 @@
+<ng-container *ngIf="toastVm$ | async as toastVm">
+  <div class="toast success" *ngIf="toastVm.toast">
+    <p>{{ toastVm.toast.message }}</p>
+  </div>
+</ng-container>
