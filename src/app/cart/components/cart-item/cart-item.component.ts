@@ -1,5 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+} from '@angular/core';
 import { CartInterface } from '../../../shared/models/cart.model';
 
 @Component({
@@ -12,4 +18,15 @@ import { CartInterface } from '../../../shared/models/cart.model';
 })
 export class CartItemComponent {
   @Input({ required: true }) item!: CartInterface;
+
+  @Output() increaseQuantity = new EventEmitter<number>();
+  @Output() decreaseQuantity = new EventEmitter<number>();
+
+  onIncreaseQuantity(): void {
+    this.increaseQuantity.emit();
+  }
+
+  onDecreaseQuantity(): void {
+    this.decreaseQuantity.emit();
+  }
 }

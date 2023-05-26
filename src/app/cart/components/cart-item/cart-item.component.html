@@ -9,6 +9,12 @@
     <div class="card__price">
       {{ item.product.price | currency }}
     </div>
-    <div class="card__actions"></div>
+    <div class="card__actions">
+      <button (click)="onDecreaseQuantity()">-</button>
+      <span>{{ item.quantity }}</span>
+      <button (click)="onIncreaseQuantity()">+</button>
+    </div>
+
+    <p>Item total price: {{ item.quantity * item.product.price }}</p>
   </div>
 </div>

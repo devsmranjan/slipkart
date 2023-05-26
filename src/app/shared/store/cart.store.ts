@@ -22,13 +22,19 @@ export class CartStore extends ComponentStore<CartState> {
   /* -------------------------------- Selectors ------------------------------- */
 
   readonly #cart$ = this.select((state) => state.cart);
+
   readonly #cartCount$ = this.select(this.#cart$, (cart) =>
     cart.reduce((acc, item) => acc + item.quantity, 0)
   );
+
   readonly #hasProduct$ = this.select(
     this.#cart$,
     (cart) => (product: ProductInterface) =>
       cart.some((item) => item.product.id === product.id)
+  );
+
+  readonly #cartValue$ = this.select(this.#cart$, (cart) =>
+    cart.reduce((acc, item) => acc + item.product.price * item.quantity, 0)
   );
 
   /* ------------------------------- View Models ------------------------------ */
@@ -37,10 +43,12 @@ export class CartStore extends ComponentStore<CartState> {
     this.#cart$,
     this.#cartCount$,
     this.#hasProduct$,
-    (cart, cartCount, hasProduct) => ({
+    this.#cartValue$,
+    (cart, cartCount, hasProduct, cartValue) => ({
       cart,
       cartCount,
       hasProduct,
+      cartValue,
     })
   );
 
