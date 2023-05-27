@@ -45,8 +45,10 @@ export class ProductListComponent implements OnInit {
     this.loadProducts();
   }
 
-  loadProducts(limit: number = 10, skip: number = 0) {
-    this.#productListStore.loadProducts({ limit, skip });
+  loadProducts() {
+    this.#productListStore.fetchProducts(
+      this.#productListStore.productListParams$
+    );
   }
 
   trackById(index: number, product: ProductInterface) {
@@ -70,6 +72,7 @@ export class ProductListComponent implements OnInit {
       message: 'Refreshing...',
       type: 'info',
     });
+
     this.loadProducts();
   }
 }

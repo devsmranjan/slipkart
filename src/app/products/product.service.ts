@@ -12,9 +12,9 @@ export class ProductService {
   // constants
   #SERVER_URL: string = 'https://dummyjson.com';
 
-  getProducts(limit: number, skip: number) {
+  getProducts(limit: number, page: number) {
     return this.#http.get<ProductResponseInterface>(
-      `${this.#SERVER_URL}/products?limit=${limit}&skip=${skip}`
+      `${this.#SERVER_URL}/products?limit=${limit}&skip=${page * limit}`
     );
   }
 
