@@ -1,7 +1,8 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
-import { Observable, switchMap, tap } from 'rxjs';
+import { debounce } from 'lodash-es';
+import { Observable, skip, switchMap, tap } from 'rxjs';
 
 import { ToastStore } from '../../../shared/store/toast.store';
 import { ProductInterface } from '../../models';
@@ -18,6 +19,7 @@ interface ProductListState extends ProductListParams {
   total: number;
   loading: boolean;
   error: string | null;
+  lastLoadTime: number | null;
 }
 
 const initialProductListState: ProductListState = {
@@ -28,6 +30,7 @@ const initialProductListState: ProductListState = {
   query: null,
   loading: false,
   error: null,
+  lastLoadTime: null,
 };
 
 export class ProductListStore extends ComponentStore<ProductListState> {
@@ -49,6 +52,7 @@ export class ProductListStore extends ComponentStore<ProductListState> {
   readonly #query$ = this.select((state) => state.query); // search query
   readonly #loading$ = this.select((state) => state.loading); // loading state
   readonly #error$ = this.select((state) => state.error); // error message
+  readonly #lastLoadTime$ = this.select((state) => state.lastLoadTime); // last fetch timestamp
 
   /* --------------------------- Combined Selectors --------------------------- */
 
@@ -71,15 +75,14 @@ export class ProductListStore extends ComponentStore<ProductListState> {
     })
   );
 
-  // params for fetching products
-  readonly productListParams$ = this.select(
+  // dependencies for fetching products
+  readonly #dependencies$ = this.select(
     this.#page$,
     this.#limit$,
     this.#query$,
+    this.#lastLoadTime$,
 
-    (page, limit, query) => ({ page, limit, query }),
-
-    { debounce: true }
+    (page, limit, query, lastLoadTime) => ({ page, limit, query, lastLoadTime })
   );
 
   /* --------------------------------- Updaters -------------------------------- */
@@ -112,21 +115,28 @@ export class ProductListStore extends ComponentStore<ProductListState> {
     })
   );
 
-  readonly setCurrentPage = this.updater(
+  readonly #setLastLoadTime = this.updater(
+    (state: ProductListState, lastLoadTime: number) => ({
+      ...state,
+      lastLoadTime,
+    })
+  );
+
+  readonly #setCurrentPage = this.updater(
     (state: ProductListState, page: number) => ({
       ...state,
       page,
     })
   );
 
-  readonly setListSize = this.updater(
+  readonly #setListSize = this.updater(
     (state: ProductListState, limit: number) => ({
       ...state,
       limit,
     })
   );
 
-  readonly setSearchQuery = this.updater(
+  readonly #setSearchQuery = this.updater(
     (state: ProductListState, query: string | null) => ({
       ...state,
       query,
@@ -135,9 +145,10 @@ export class ProductListStore extends ComponentStore<ProductListState> {
 
   /* --------------------------------- Effects -------------------------------- */
 
-  readonly fetchProducts = this.effect(
+  readonly #fetchProducts = this.effect(
     (params$: Observable<ProductListParams>) =>
       params$.pipe(
+        skip(1),
         tap(() => {
           this.#setLoading(true);
         }),
@@ -161,4 +172,48 @@ export class ProductListStore extends ComponentStore<ProductListState> {
         })
       )
   );
+
+  /* --------------------------------- Methods -------------------------------- */
+
+  // load products if not loaded yet
+  loadProducts() {
+    if (this.get().products === null) {
+      this.#fetchProducts(this.#dependencies$);
+    }
+
+    this.#setLastLoadTime(Date.now());
+  }
+
+  // reload products
+  #reloadProducts() {
+    this.#toastStore.showToast({
+      message: 'Refreshing...',
+      type: 'info',
+    });
+
+    this.loadProducts();
+  }
+
+  reloadProducts = debounce(this.#reloadProducts, 1000, {
+    leading: true,
+    trailing: true,
+  });
+
+  // search products
+  setSearchQuery = debounce(this.#setSearchQuery, 1000, {
+    leading: false,
+    trailing: true,
+  });
+
+  // set page
+  setCurrentPage = debounce(this.#setCurrentPage, 1000, {
+    leading: false,
+    trailing: true,
+  });
+
+  // set list size
+  setListSize = debounce(this.#setListSize, 1000, {
+    leading: false,
+    trailing: true,
+  });
 }
