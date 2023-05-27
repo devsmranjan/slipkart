@@ -10,6 +10,7 @@ import { ProductService } from '../../product.service';
 interface ProductListParams {
   page: number;
   limit: number;
+  query: string | null;
 }
 
 interface ProductListState extends ProductListParams {
@@ -24,6 +25,7 @@ const initialProductListState: ProductListState = {
   total: 0,
   page: 0,
   limit: 10,
+  query: null,
   loading: false,
   error: null,
 };
@@ -44,6 +46,7 @@ export class ProductListStore extends ComponentStore<ProductListState> {
   readonly #total$ = this.select((state) => state.total); // total products
   readonly #page$ = this.select((state) => state.page); // current page
   readonly #limit$ = this.select((state) => state.limit); // limit per page
+  readonly #query$ = this.select((state) => state.query); // search query
   readonly #loading$ = this.select((state) => state.loading); // loading state
   readonly #error$ = this.select((state) => state.error); // error message
 
@@ -72,8 +75,9 @@ export class ProductListStore extends ComponentStore<ProductListState> {
   readonly productListParams$ = this.select(
     this.#page$,
     this.#limit$,
+    this.#query$,
 
-    (page, limit) => ({ page, limit }),
+    (page, limit, query) => ({ page, limit, query }),
 
     { debounce: true }
   );
@@ -122,6 +126,13 @@ export class ProductListStore extends ComponentStore<ProductListState> {
     })
   );
 
+  readonly setSearchQuery = this.updater(
+    (state: ProductListState, query: string | null) => ({
+      ...state,
+      query,
+    })
+  );
+
   /* --------------------------------- Effects -------------------------------- */
 
   readonly fetchProducts = this.effect(
@@ -130,8 +141,8 @@ export class ProductListStore extends ComponentStore<ProductListState> {
         tap(() => {
           this.#setLoading(true);
         }),
-        switchMap(({ limit, page }) => {
-          return this.#productService.getProducts(limit, page).pipe(
+        switchMap(({ limit, page, query }) => {
+          return this.#productService.getProducts(limit, page, query).pipe(
             tapResponse(
               (response) => {
                 this.#setTotal(response.total);

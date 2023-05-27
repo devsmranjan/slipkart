@@ -1,5 +1,8 @@
 <ng-container *ngIf="productListVm$ | async as productListVm">
-  <app-product-list-header (clickRefresh)="onClickRefresh()" />
+  <app-product-list-header
+    (clickRefresh)="onClickRefresh()"
+    (changeSearchQuery)="onChangeSearchQuery($event)"
+  />
   <div class="products">
     <ng-container *ngIf="productListVm.products; else placeholder">
       <ng-container *ngIf="productListVm.products.length > 0; else noData">

@@ -12,9 +12,21 @@ export class ProductService {
   // constants
   #SERVER_URL: string = 'https://dummyjson.com';
 
-  getProducts(limit: number, page: number) {
+  getProducts(limit: number, page: number, query: string | null) {
+    let URL = `${this.#SERVER_URL}/products`;
+
+    const params = new URLSearchParams({
+      limit: limit.toString(),
+      skip: (page * limit).toString(),
+    });
+
+    if (query) {
+      URL = `${URL}/search`;
+      params.append('q', query);
+    }
+
     return this.#http.get<ProductResponseInterface>(
-      `${this.#SERVER_URL}/products?limit=${limit}&skip=${page * limit}`
+      `${URL}?${params.toString()}`
     );
   }
 

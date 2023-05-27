@@ -16,14 +16,14 @@ import {
 })
 export class ProductListHeaderComponent {
   @Output() clickRefresh = new EventEmitter<void>();
-  @Output() changeSearch = new EventEmitter<string>();
+  @Output() changeSearchQuery = new EventEmitter<string>();
 
   onClickRefresh() {
     this.clickRefresh.emit();
   }
 
-  onChangeSearch(e: Event) {
+  onChangeSearchQuery(e: Event) {
     const target = e.target as HTMLInputElement;
-    this.changeSearch.emit(target.value);
+    this.changeSearchQuery.emit(target.value);
   }
 }

@@ -1,7 +1,11 @@
 <div class="products__header">
   <h1>Products</h1>
   <div class="products__search">
-    <input type="text" placeholder="Search" (input)="onChangeSearch($event)" />
+    <input
+      type="text"
+      placeholder="Search"
+      (input)="onChangeSearchQuery($event)"
+    />
   </div>
   <div class="products__header__actions">
     <button mat-raised-button color="primary" (click)="onClickRefresh()">

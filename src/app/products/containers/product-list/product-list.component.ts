@@ -75,4 +75,8 @@ export class ProductListComponent implements OnInit {
 
     this.loadProducts();
   }
+
+  onChangeSearchQuery(query: string) {
+    this.#productListStore.setSearchQuery(query);
+  }
 }
