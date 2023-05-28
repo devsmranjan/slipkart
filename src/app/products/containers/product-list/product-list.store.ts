@@ -2,7 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 import { debounce } from 'lodash-es';
-import { Observable, skip, switchMap, tap } from 'rxjs';
+import { Observable, Subject, combineLatest, switchMap, tap } from 'rxjs';
 
 import { ToastStore } from '../../../shared/store/toast.store';
 import { ProductInterface } from '../../models';
@@ -19,7 +19,6 @@ interface ProductListState extends ProductListParams {
   total: number;
   loading: boolean;
   error: string | null;
-  lastLoadTime: number | null;
 }
 
 const initialProductListState: ProductListState = {
@@ -30,13 +29,16 @@ const initialProductListState: ProductListState = {
   query: null,
   loading: false,
   error: null,
-  lastLoadTime: null,
 };
 
 export class ProductListStore extends ComponentStore<ProductListState> {
   constructor() {
     super(initialProductListState);
   }
+
+  /* -------------------------------- Subjects -------------------------------- */
+
+  #refreshProductList$ = new Subject<void>();
 
   /* --------------------------------- Injects -------------------------------- */
 
@@ -52,7 +54,6 @@ export class ProductListStore extends ComponentStore<ProductListState> {
   readonly #query$ = this.select((state) => state.query); // search query
   readonly #loading$ = this.select((state) => state.loading); // loading state
   readonly #error$ = this.select((state) => state.error); // error message
-  readonly #lastLoadTime$ = this.select((state) => state.lastLoadTime); // last fetch timestamp
 
   /* --------------------------- Combined Selectors --------------------------- */
 
@@ -80,9 +81,8 @@ export class ProductListStore extends ComponentStore<ProductListState> {
     this.#page$,
     this.#limit$,
     this.#query$,
-    this.#lastLoadTime$,
 
-    (page, limit, query, lastLoadTime) => ({ page, limit, query, lastLoadTime })
+    (page, limit, query) => ({ page, limit, query })
   );
 
   /* --------------------------------- Updaters -------------------------------- */
@@ -115,13 +115,6 @@ export class ProductListStore extends ComponentStore<ProductListState> {
     })
   );
 
-  readonly #setLastLoadTime = this.updater(
-    (state: ProductListState, lastLoadTime: number) => ({
-      ...state,
-      lastLoadTime,
-    })
-  );
-
   readonly #setCurrentPage = this.updater(
     (state: ProductListState, page: number) => ({
       ...state,
@@ -147,12 +140,11 @@ export class ProductListStore extends ComponentStore<ProductListState> {
 
   readonly #fetchProducts = this.effect(
     (params$: Observable<ProductListParams>) =>
-      params$.pipe(
-        skip(1),
+      combineLatest([params$, this.#refreshProductList$]).pipe(
         tap(() => {
           this.#setLoading(true);
         }),
-        switchMap(({ limit, page, query }) => {
+        switchMap(([{ limit, page, query }]) => {
           return this.#productService.getProducts(limit, page, query).pipe(
             tapResponse(
               (response) => {
@@ -177,11 +169,12 @@ export class ProductListStore extends ComponentStore<ProductListState> {
 
   // load products if not loaded yet
   loadProducts() {
+    // create subscription for the initial state
     if (this.get().products === null) {
       this.#fetchProducts(this.#dependencies$);
     }
 
-    this.#setLastLoadTime(Date.now());
+    this.#refreshProductList$.next();
   }
 
   // reload products
@@ -191,7 +184,7 @@ export class ProductListStore extends ComponentStore<ProductListState> {
       type: 'info',
     });
 
-    this.loadProducts();
+    this.#refreshProductList$.next();
   }
 
   reloadProducts = debounce(this.#reloadProducts, 1000, {
