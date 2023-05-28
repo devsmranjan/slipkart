@@ -17,6 +17,7 @@ interface ProductListParams {
 interface ProductListState extends ProductListParams {
   products: ProductInterface[] | null;
   total: number;
+  pageStart: number;
   loading: boolean | null;
   error: string | null;
 }
@@ -24,6 +25,7 @@ interface ProductListState extends ProductListParams {
 const initialProductListState: ProductListState = {
   products: null,
   total: 0,
+  pageStart: 0,
   page: 0,
   limit: 10,
   query: null,
@@ -45,6 +47,7 @@ export class ProductListStore extends ComponentStore<ProductListState> {
 
   readonly #products$ = this.select((state) => state.products); // products
   readonly #total$ = this.select((state) => state.total); // total products
+  readonly #pageStart$ = this.select((state) => state.pageStart); // page start
   readonly #page$ = this.select((state) => state.page); // current page
   readonly #limit$ = this.select((state) => state.limit); // limit per page
   readonly #query$ = this.select((state) => state.query); // search query
@@ -57,16 +60,20 @@ export class ProductListStore extends ComponentStore<ProductListState> {
   readonly vm$ = this.select(
     this.#products$,
     this.#total$,
+    this.#pageStart$,
     this.#page$,
     this.#limit$,
+    this.#query$,
     this.#loading$,
     this.#error$,
 
-    (products, total, page, limit, loading, error) => ({
+    (products, total, pageStart, page, limit, query, loading, error) => ({
       products,
       total,
+      pageStart,
       page,
       limit,
+      query,
       loading,
       error,
     })
@@ -99,6 +106,13 @@ export class ProductListStore extends ComponentStore<ProductListState> {
     (state: ProductListState, total: number) => ({
       ...state,
       total,
+    })
+  );
+
+  readonly #setPageStart = this.updater(
+    (state: ProductListState, pageStart: number) => ({
+      ...state,
+      pageStart,
     })
   );
 
@@ -177,11 +191,16 @@ export class ProductListStore extends ComponentStore<ProductListState> {
     trailing: true,
   });
 
+  updatePageStart(page: number) {
+    this.#setPageStart(page);
+    this.#setCurrentPage(page);
+  }
+
   // search products
-  setSearchQuery = debounce(
+  updateSearchQuery = debounce(
     (query: string) => {
       this.#setSearchQuery(query);
-      this.#setCurrentPage(0);
+      this.#setCurrentPage(this.get().pageStart);
       this.#reloadProducts();
     },
     1000,
@@ -192,7 +211,7 @@ export class ProductListStore extends ComponentStore<ProductListState> {
   );
 
   // set page
-  setCurrentPage = debounce(
+  updateCurrentPage = debounce(
     (page: number) => {
       this.#setCurrentPage(page);
       this.#reloadProducts();
@@ -205,10 +224,10 @@ export class ProductListStore extends ComponentStore<ProductListState> {
   );
 
   // set list size
-  setListSize = debounce(
+  updateListSize = debounce(
     (limit: number) => {
       this.#setListSize(limit);
-      this.#setCurrentPage(0);
+      this.#setCurrentPage(this.get().pageStart);
       this.#reloadProducts();
     },
     1000,

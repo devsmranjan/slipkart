@@ -40,6 +40,7 @@ export class ProductListComponent implements OnInit {
   readonly cartVm$ = this.#cartStore.vm$;
 
   ngOnInit(): void {
+    this.#productListStore.updatePageStart(1);
     this.#productListStore.loadProducts();
   }
 
@@ -66,6 +67,6 @@ export class ProductListComponent implements OnInit {
 
   // search
   onChangeSearchQuery(query: string) {
-    this.#productListStore.setSearchQuery(query);
+    this.#productListStore.updateSearchQuery(query);
   }
 }
