@@ -2,7 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 import { debounce } from 'lodash-es';
-import { Observable, Subject, combineLatest, switchMap, tap } from 'rxjs';
+import { Observable, switchMap, tap } from 'rxjs';
 
 import { ToastStore } from '../../../shared/store/toast.store';
 import { ProductInterface } from '../../models';
@@ -35,10 +35,6 @@ export class ProductListStore extends ComponentStore<ProductListState> {
   constructor() {
     super(initialProductListState);
   }
-
-  /* -------------------------------- Subjects -------------------------------- */
-
-  #refreshProductList$ = new Subject<void>();
 
   /* --------------------------------- Injects -------------------------------- */
 
@@ -74,15 +70,6 @@ export class ProductListStore extends ComponentStore<ProductListState> {
       loading,
       error,
     })
-  );
-
-  // dependencies for fetching products
-  readonly #dependencies$ = this.select(
-    this.#page$,
-    this.#limit$,
-    this.#query$,
-
-    (page, limit, query) => ({ page, limit, query })
   );
 
   /* --------------------------------- Updaters -------------------------------- */
@@ -140,11 +127,11 @@ export class ProductListStore extends ComponentStore<ProductListState> {
 
   readonly #fetchProducts = this.effect(
     (params$: Observable<ProductListParams>) =>
-      combineLatest([params$, this.#refreshProductList$]).pipe(
+      params$.pipe(
         tap(() => {
           this.#setLoading(true);
         }),
-        switchMap(([{ limit, page, query }]) => {
+        switchMap(({ limit, page, query }) => {
           return this.#productService.getProducts(limit, page, query).pipe(
             tapResponse(
               (response) => {
@@ -170,11 +157,9 @@ export class ProductListStore extends ComponentStore<ProductListState> {
   // load products if not loaded yet
   loadProducts() {
     // create subscription for the initial state
-    if (this.get().loading === null) {
-      this.#fetchProducts(this.#dependencies$);
-    }
+    const { page, limit, query } = this.get();
 
-    this.#refreshProductList$.next();
+    this.#fetchProducts({ page, limit, query });
   }
 
   // reload products
@@ -184,7 +169,7 @@ export class ProductListStore extends ComponentStore<ProductListState> {
       type: 'info',
     });
 
-    this.#refreshProductList$.next();
+    this.loadProducts();
   }
 
   reloadProducts = debounce(this.#reloadProducts, 1000, {
@@ -193,20 +178,43 @@ export class ProductListStore extends ComponentStore<ProductListState> {
   });
 
   // search products
-  setSearchQuery = debounce(this.#setSearchQuery, 1000, {
-    leading: false,
-    trailing: true,
-  });
+  setSearchQuery = debounce(
+    (query: string) => {
+      this.#setSearchQuery(query);
+      this.#setCurrentPage(0);
+      this.#reloadProducts();
+    },
+    1000,
+    {
+      leading: false,
+      trailing: true,
+    }
+  );
 
   // set page
-  setCurrentPage = debounce(this.#setCurrentPage, 1000, {
-    leading: false,
-    trailing: true,
-  });
+  setCurrentPage = debounce(
+    (page: number) => {
+      this.#setCurrentPage(page);
+      this.#reloadProducts();
+    },
+    1000,
+    {
+      leading: false,
+      trailing: true,
+    }
+  );
 
   // set list size
-  setListSize = debounce(this.#setListSize, 1000, {
-    leading: false,
-    trailing: true,
-  });
+  setListSize = debounce(
+    (limit: number) => {
+      this.#setListSize(limit);
+      this.#setCurrentPage(0);
+      this.#reloadProducts();
+    },
+    1000,
+    {
+      leading: false,
+      trailing: true,
+    }
+  );
 }
