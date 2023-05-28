@@ -17,7 +17,7 @@ interface ProductListParams {
 interface ProductListState extends ProductListParams {
   products: ProductInterface[] | null;
   total: number;
-  loading: boolean;
+  loading: boolean | null;
   error: string | null;
 }
 
@@ -27,7 +27,7 @@ const initialProductListState: ProductListState = {
   page: 0,
   limit: 10,
   query: null,
-  loading: false,
+  loading: null,
   error: null,
 };
 
@@ -170,7 +170,7 @@ export class ProductListStore extends ComponentStore<ProductListState> {
   // load products if not loaded yet
   loadProducts() {
     // create subscription for the initial state
-    if (this.get().products === null) {
+    if (this.get().loading === null) {
       this.#fetchProducts(this.#dependencies$);
     }
 

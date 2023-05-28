@@ -22,7 +22,7 @@
     </ng-container>
 
     <ng-template #placeholder>
-      <p *ngIf="productListVm.loading">Loading...</p>
+      <p *ngIf="productListVm.loading !== null">Loading...</p>
       <p *ngIf="productListVm.error">Error : {{ productListVm.error }}</p>
     </ng-template>
   </div>
