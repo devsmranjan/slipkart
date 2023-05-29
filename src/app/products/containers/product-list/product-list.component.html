@@ -26,4 +26,11 @@
       <p *ngIf="productListVm.error">Error : {{ productListVm.error }}</p>
     </ng-template>
   </div>
+
+  <app-pagination
+    [initialPage]="productListVm.pageStart"
+    [page]="productListVm.page"
+    [total]="productListVm.total"
+    (changePage)="onChangePage($event)"
+  />
 </ng-container>

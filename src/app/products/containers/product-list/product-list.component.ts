@@ -8,6 +8,8 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 
+import { tap } from 'rxjs';
+import { PaginationComponent } from '../../../shared/pagination/pagination.component';
 import { CartStore } from '../../../shared/store/cart.store';
 import { ProductCardComponent } from '../../components/product-card/product-card.component';
 import { ProductListHeaderComponent } from '../../components/product-list-header/product-list-header.component';
@@ -23,6 +25,7 @@ import { ProductListStore } from './product-list.store';
     ProductCardComponent,
     HttpClientModule,
     ProductListHeaderComponent,
+    PaginationComponent,
   ],
   templateUrl: './product-list.component.html',
   styleUrls: ['./product-list.component.scss'],
@@ -36,11 +39,13 @@ export class ProductListComponent implements OnInit {
   #router = inject(Router);
 
   // view models
-  readonly productListVm$ = this.#productListStore.vm$;
+  readonly productListVm$ = this.#productListStore.vm$.pipe(
+    tap((vm) => console.log('ProductListComponent.vm$', vm))
+  );
   readonly cartVm$ = this.#cartStore.vm$;
 
   ngOnInit(): void {
-    this.#productListStore.updatePageStart(1);
+    this.#productListStore.updatePageStart(0);
     this.#productListStore.loadProducts();
   }
 
@@ -68,5 +73,10 @@ export class ProductListComponent implements OnInit {
   // search
   onChangeSearchQuery(query: string) {
     this.#productListStore.updateSearchQuery(query);
+  }
+
+  // pagination
+  onChangePage(page: number) {
+    this.#productListStore.updateCurrentPage(page);
   }
 }

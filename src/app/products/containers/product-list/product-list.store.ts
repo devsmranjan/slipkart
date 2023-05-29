@@ -186,10 +186,16 @@ export class ProductListStore extends ComponentStore<ProductListState> {
     this.loadProducts();
   }
 
-  reloadProducts = debounce(this.#reloadProducts, 1000, {
-    leading: true,
-    trailing: true,
-  });
+  reloadProducts = debounce(
+    () => {
+      this.#reloadProducts();
+    },
+    1000,
+    {
+      leading: true,
+      trailing: true,
+    }
+  );
 
   updatePageStart(page: number) {
     this.#setPageStart(page);
@@ -200,7 +206,7 @@ export class ProductListStore extends ComponentStore<ProductListState> {
   updateSearchQuery = debounce(
     (query: string) => {
       this.#setSearchQuery(query);
-      this.#setCurrentPage(this.get().pageStart);
+      this.updatePageStart(initialProductListState.page);
       this.#reloadProducts();
     },
     1000,
@@ -227,7 +233,7 @@ export class ProductListStore extends ComponentStore<ProductListState> {
   updateListSize = debounce(
     (limit: number) => {
       this.#setListSize(limit);
-      this.#setCurrentPage(this.get().pageStart);
+      this.#setCurrentPage(initialProductListState.page);
       this.#reloadProducts();
     },
     1000,
