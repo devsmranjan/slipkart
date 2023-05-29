@@ -40,6 +40,7 @@ export class PaginationComponent {
   }
 
   @Output() changePage = new EventEmitter<number>();
+  @Output() changeSize = new EventEmitter<number>();
 
   readonly vm$ = this.#paginationStore.vm$.pipe(
     tap((vm) => console.log('PaginationComponent.vm$', vm))
@@ -58,5 +59,11 @@ export class PaginationComponent {
   onClickPage(page: number) {
     this.#paginationStore.setPage(page);
     this.changePage.emit(page);
+  }
+
+  onChangeSize(e: Event) {
+    const size = +(e.target as HTMLSelectElement).value;
+    this.#paginationStore.setSize(size);
+    this.changeSize.emit(size);
   }
 }

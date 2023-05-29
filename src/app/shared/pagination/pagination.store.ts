@@ -1,14 +1,17 @@
 import { ComponentStore } from '@ngrx/component-store';
+import { tap } from 'rxjs';
 
 interface PaginationState {
   page: number;
   size: number;
+  pageSizes: number[];
   total: number;
 }
 
 const initialState: PaginationState = {
   page: 0,
   size: 10,
+  pageSizes: [10, 20, 50, 100],
   total: 0,
 };
 
@@ -17,7 +20,12 @@ export class PaginationStore extends ComponentStore<PaginationState> {
     super(initialState);
   }
 
-  readonly #size$ = this.select((state) => state.size);
+  readonly #pageSizes$ = this.select((state) => state.pageSizes);
+  readonly #size$ = this.select((state) => {
+    const size = state.size;
+
+    return state.pageSizes.includes(size) ? size : state.pageSizes[0];
+  }).pipe(tap(console.log));
 
   readonly #page$ = this.select((state) => state.page);
   readonly #total$ = this.select((state) => state.total);
@@ -48,14 +56,16 @@ export class PaginationStore extends ComponentStore<PaginationState> {
   readonly vm$ = this.select(
     this.#page$,
     this.#size$,
+    this.#pageSizes$,
     this.#total$,
     this.#isFirstPage$,
     this.#isLastPage$,
     this.#pages$,
     this.#size$,
-    (page, size, total, isFirstPage, isLastPage, pages, sizes) => ({
+    (page, size, pageSizes, total, isFirstPage, isLastPage, pages, sizes) => ({
       page,
       size,
+      pageSizes,
       total,
       isFirstPage,
       isLastPage,

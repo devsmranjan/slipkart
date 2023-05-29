@@ -1,9 +1,15 @@
 <div *ngIf="vm$ | async as vm" class="pagination">
-  <!-- <div class="pagination__size">
-    <select>
-      <option>10</option>
+  <div class="pagination__size">
+    <select (change)="onChangeSize($event)">
+      <option
+        *ngFor="let pageSize of vm.pageSizes"
+        [value]="pageSize"
+        [selected]="vm.size === pageSize"
+      >
+        {{ pageSize }}
+      </option>
     </select>
-  </div> -->
+  </div>
   <div class="pagination__pages">
     <button
       class="pagination__nav"

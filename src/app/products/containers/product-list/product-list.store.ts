@@ -18,6 +18,7 @@ interface ProductListState extends ProductListParams {
   products: ProductInterface[] | null;
   total: number;
   pageStart: number;
+  limitStart: number;
   loading: boolean | null;
   error: string | null;
 }
@@ -27,6 +28,7 @@ const initialProductListState: ProductListState = {
   total: 0,
   pageStart: 0,
   page: 0,
+  limitStart: 10,
   limit: 10,
   query: null,
   loading: null,
@@ -49,6 +51,7 @@ export class ProductListStore extends ComponentStore<ProductListState> {
   readonly #total$ = this.select((state) => state.total); // total products
   readonly #pageStart$ = this.select((state) => state.pageStart); // page start
   readonly #page$ = this.select((state) => state.page); // current page
+  readonly #limitStart$ = this.select((state) => state.limitStart); // limit start
   readonly #limit$ = this.select((state) => state.limit); // limit per page
   readonly #query$ = this.select((state) => state.query); // search query
   readonly #loading$ = this.select((state) => state.loading); // loading state
@@ -62,16 +65,28 @@ export class ProductListStore extends ComponentStore<ProductListState> {
     this.#total$,
     this.#pageStart$,
     this.#page$,
+    this.#limitStart$,
     this.#limit$,
     this.#query$,
     this.#loading$,
     this.#error$,
 
-    (products, total, pageStart, page, limit, query, loading, error) => ({
+    (
       products,
       total,
       pageStart,
       page,
+      limitStart,
+      limit,
+      query,
+      loading,
+      error
+    ) => ({
+      products,
+      total,
+      pageStart,
+      page,
+      limitStart,
       limit,
       query,
       loading,
@@ -120,6 +135,13 @@ export class ProductListStore extends ComponentStore<ProductListState> {
     (state: ProductListState, page: number) => ({
       ...state,
       page,
+    })
+  );
+
+  readonly #setLimitStart = this.updater(
+    (state: ProductListState, limitStart: number) => ({
+      ...state,
+      limitStart,
     })
   );
 
@@ -200,6 +222,11 @@ export class ProductListStore extends ComponentStore<ProductListState> {
   updatePageStart(page: number) {
     this.#setPageStart(page);
     this.#setCurrentPage(page);
+  }
+
+  updateLimitStart(limitStart: number) {
+    this.#setLimitStart(limitStart);
+    this.#setListSize(limitStart);
   }
 
   // search products

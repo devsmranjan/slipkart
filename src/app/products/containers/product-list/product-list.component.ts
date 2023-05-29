@@ -46,6 +46,7 @@ export class ProductListComponent implements OnInit {
 
   ngOnInit(): void {
     this.#productListStore.updatePageStart(0);
+    this.#productListStore.updateLimitStart(50);
     this.#productListStore.loadProducts();
   }
 
@@ -78,5 +79,9 @@ export class ProductListComponent implements OnInit {
   // pagination
   onChangePage(page: number) {
     this.#productListStore.updateCurrentPage(page);
+  }
+
+  onChangeSize(size: number) {
+    this.#productListStore.updateListSize(size);
   }
 }

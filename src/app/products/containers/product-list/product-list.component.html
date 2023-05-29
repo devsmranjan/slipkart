@@ -29,8 +29,10 @@
 
   <app-pagination
     [initialPage]="productListVm.pageStart"
+    [initialSize]="productListVm.limit"
     [page]="productListVm.page"
     [total]="productListVm.total"
     (changePage)="onChangePage($event)"
+    (changeSize)="onChangeSize($event)"
   />
 </ng-container>
