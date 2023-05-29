@@ -40,21 +40,21 @@ export class ProductDetailsStore extends ComponentStore<ProductDetailsState> {
     })
   );
 
-  readonly #setProduct = this.updater(
+  readonly setProduct = this.updater(
     (state: ProductDetailsState, product: ProductInterface | null) => ({
       ...state,
       product,
     })
   );
 
-  readonly #setLoading = this.updater(
+  readonly setLoading = this.updater(
     (state: ProductDetailsState, loading: boolean) => ({
       ...state,
       loading,
     })
   );
 
-  readonly #setError = this.updater(
+  readonly setError = this.updater(
     (state: ProductDetailsState, error: string | null) => ({
       ...state,
       error,
@@ -64,20 +64,20 @@ export class ProductDetailsStore extends ComponentStore<ProductDetailsState> {
   readonly loadProduct = this.effect((id$: Observable<number | string>) => {
     return id$.pipe(
       tap(() => {
-        this.#setLoading(true);
+        this.setLoading(true);
       }),
       switchMap((id) =>
         this.#productService.getProduct(id).pipe(
           tapResponse(
             (product) => {
-              this.#setProduct(product);
-              this.#setError(null);
+              this.setProduct(product);
+              this.setError(null);
             },
             (error: HttpErrorResponse) => {
-              this.#setError(error.error?.message ?? error.message);
+              this.setError(error.error?.message ?? error.message);
             },
             () => {
-              this.#setLoading(false);
+              this.setLoading(false);
             }
           )
         )

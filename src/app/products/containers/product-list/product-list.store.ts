@@ -4,6 +4,7 @@ import { ComponentStore, tapResponse } from '@ngrx/component-store';
 import { debounce } from 'lodash-es';
 import { Observable, switchMap, tap } from 'rxjs';
 
+import { ToastInterface } from '../../../shared/models/toast.model';
 import { ToastStore } from '../../../shared/store/toast.store';
 import { ProductInterface } from '../../models';
 import { ProductService } from '../../product.service';
@@ -96,63 +97,61 @@ export class ProductListStore extends ComponentStore<ProductListState> {
 
   /* --------------------------------- Updaters -------------------------------- */
 
-  readonly #setProducts = this.updater(
+  readonly setProducts = this.updater(
     (state: ProductListState, products: ProductInterface[] | null) => ({
       ...state,
       products,
     })
   );
 
-  readonly #setLoading = this.updater(
+  readonly setLoading = this.updater(
     (state: ProductListState, loading: boolean) => ({
       ...state,
       loading,
     })
   );
 
-  readonly #setError = this.updater(
+  readonly setError = this.updater(
     (state: ProductListState, error: string | null) => ({
       ...state,
       error,
     })
   );
 
-  readonly #setTotal = this.updater(
+  readonly setTotal = this.updater(
     (state: ProductListState, total: number) => ({
       ...state,
       total,
     })
   );
 
-  readonly #setPageStart = this.updater(
+  readonly setPageStart = this.updater(
     (state: ProductListState, pageStart: number) => ({
       ...state,
       pageStart,
     })
   );
 
-  readonly #setCurrentPage = this.updater(
-    (state: ProductListState, page: number) => ({
-      ...state,
-      page,
-    })
-  );
+  readonly setPage = this.updater((state: ProductListState, page: number) => ({
+    ...state,
+    page,
+  }));
 
-  readonly #setLimitStart = this.updater(
+  readonly setLimitStart = this.updater(
     (state: ProductListState, limitStart: number) => ({
       ...state,
       limitStart,
     })
   );
 
-  readonly #setListSize = this.updater(
+  readonly setLimit = this.updater(
     (state: ProductListState, limit: number) => ({
       ...state,
       limit,
     })
   );
 
-  readonly #setSearchQuery = this.updater(
+  readonly setQuery = this.updater(
     (state: ProductListState, query: string | null) => ({
       ...state,
       query,
@@ -165,21 +164,21 @@ export class ProductListStore extends ComponentStore<ProductListState> {
     (params$: Observable<ProductListParams>) =>
       params$.pipe(
         tap(() => {
-          this.#setLoading(true);
+          this.setLoading(true);
         }),
         switchMap(({ limit, page, query }) => {
           return this.#productService.getProducts(limit, page, query).pipe(
             tapResponse(
               (response) => {
-                this.#setTotal(response.total);
-                this.#setProducts(response.products);
-                this.#setError(null);
+                this.setTotal(response.total);
+                this.setProducts(response.products);
+                this.setError(null);
               },
               (error: HttpErrorResponse) => {
-                this.#setError(error.error?.message ?? error.message);
+                this.setError(error.error?.message ?? error.message);
               },
               () => {
-                this.#setLoading(false);
+                this.setLoading(false);
                 this.#toastStore.hideToast();
               }
             )
@@ -191,7 +190,11 @@ export class ProductListStore extends ComponentStore<ProductListState> {
   /* --------------------------------- Methods -------------------------------- */
 
   // load products if not loaded yet
-  loadProducts() {
+  loadProducts(toast: ToastInterface | null = null) {
+    if (toast) {
+      this.#toastStore.showToast(toast);
+    }
+
     // create subscription for the initial state
     const { page, limit, query } = this.get();
 
@@ -199,18 +202,12 @@ export class ProductListStore extends ComponentStore<ProductListState> {
   }
 
   // reload products
-  #reloadProducts() {
-    this.#toastStore.showToast({
-      message: 'Refreshing...',
-      type: 'info',
-    });
-
-    this.loadProducts();
-  }
-
   reloadProducts = debounce(
     () => {
-      this.#reloadProducts();
+      this.loadProducts({
+        message: 'Refreshing...',
+        type: 'info',
+      });
     },
     1000,
     {
@@ -219,22 +216,25 @@ export class ProductListStore extends ComponentStore<ProductListState> {
     }
   );
 
-  updatePageStart(page: number) {
-    this.#setPageStart(page);
-    this.#setCurrentPage(page);
+  updateInitialPage(page: number) {
+    this.setPageStart(page);
+    this.setPage(page);
   }
 
-  updateLimitStart(limitStart: number) {
-    this.#setLimitStart(limitStart);
-    this.#setListSize(limitStart);
+  updateInitialLimit(limit: number) {
+    this.setLimitStart(limit);
+    this.setLimit(limit);
   }
 
   // search products
-  updateSearchQuery = debounce(
+  searchProducts = debounce(
     (query: string) => {
-      this.#setSearchQuery(query);
-      this.updatePageStart(initialProductListState.page);
-      this.#reloadProducts();
+      this.setQuery(query);
+      this.updateInitialPage(initialProductListState.page);
+      this.loadProducts({
+        message: 'Searching...',
+        type: 'info',
+      });
     },
     1000,
     {
@@ -244,29 +244,21 @@ export class ProductListStore extends ComponentStore<ProductListState> {
   );
 
   // set page
-  updateCurrentPage = debounce(
-    (page: number) => {
-      this.#setCurrentPage(page);
-      this.#reloadProducts();
-    },
-    1000,
-    {
-      leading: false,
-      trailing: true,
-    }
-  );
+  updateCurrentPage = debounce((page: number) => {
+    this.setPage(page);
+    this.loadProducts({
+      message: 'Updating...',
+      type: 'info',
+    });
+  }, 1000);
 
   // set list size
-  updateListSize = debounce(
-    (limit: number) => {
-      this.#setListSize(limit);
-      this.#setCurrentPage(initialProductListState.page);
-      this.#reloadProducts();
-    },
-    1000,
-    {
-      leading: false,
-      trailing: true,
-    }
-  );
+  updateProductListSize = debounce((limit: number) => {
+    this.setLimit(limit);
+    this.setPage(initialProductListState.page);
+    this.loadProducts({
+      message: 'Updating...',
+      type: 'info',
+    });
+  }, 1000);
 }

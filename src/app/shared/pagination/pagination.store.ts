@@ -1,5 +1,4 @@
 import { ComponentStore } from '@ngrx/component-store';
-import { tap } from 'rxjs';
 
 interface PaginationState {
   page: number;
@@ -23,13 +22,10 @@ export class PaginationStore extends ComponentStore<PaginationState> {
   readonly #pageSizes$ = this.select((state) => state.pageSizes);
   readonly #size$ = this.select((state) => {
     const size = state.size;
-
     return state.pageSizes.includes(size) ? size : state.pageSizes[0];
-  }).pipe(tap(console.log));
-
+  });
   readonly #page$ = this.select((state) => state.page);
   readonly #total$ = this.select((state) => state.total);
-
   readonly #isFirstPage$ = this.select(this.#page$, (page) => page === 0);
   readonly #isLastPage$ = this.select(
     this.#page$,
@@ -40,7 +36,6 @@ export class PaginationStore extends ComponentStore<PaginationState> {
       return page === pages - 1;
     }
   );
-
   readonly #pages$ = this.select(this.#size$, this.#total$, (size, total) => {
     const pages = this.#totalPages();
 

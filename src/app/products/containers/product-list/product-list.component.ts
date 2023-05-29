@@ -8,7 +8,6 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { tap } from 'rxjs';
 import { PaginationComponent } from '../../../shared/pagination/pagination.component';
 import { CartStore } from '../../../shared/store/cart.store';
 import { ProductCardComponent } from '../../components/product-card/product-card.component';
@@ -39,14 +38,12 @@ export class ProductListComponent implements OnInit {
   #router = inject(Router);
 
   // view models
-  readonly productListVm$ = this.#productListStore.vm$.pipe(
-    tap((vm) => console.log('ProductListComponent.vm$', vm))
-  );
+  readonly productListVm$ = this.#productListStore.vm$;
   readonly cartVm$ = this.#cartStore.vm$;
 
   ngOnInit(): void {
-    this.#productListStore.updatePageStart(0);
-    this.#productListStore.updateLimitStart(50);
+    this.#productListStore.updateInitialPage(0);
+    this.#productListStore.updateInitialLimit(50);
     this.#productListStore.loadProducts();
   }
 
@@ -73,7 +70,7 @@ export class ProductListComponent implements OnInit {
 
   // search
   onChangeSearchQuery(query: string) {
-    this.#productListStore.updateSearchQuery(query);
+    this.#productListStore.searchProducts(query);
   }
 
   // pagination
@@ -82,6 +79,6 @@ export class ProductListComponent implements OnInit {
   }
 
   onChangeSize(size: number) {
-    this.#productListStore.updateListSize(size);
+    this.#productListStore.updateProductListSize(size);
   }
 }
