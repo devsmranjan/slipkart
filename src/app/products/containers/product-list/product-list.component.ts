@@ -3,10 +3,11 @@ import { HttpClientModule } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
   Component,
+  Input,
   OnInit,
   inject,
 } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { PaginationComponent } from '../../../shared/pagination/pagination.component';
 import { CartStore } from '../../../shared/store/cart.store';
@@ -36,15 +37,31 @@ export class ProductListComponent implements OnInit {
   #productListStore = inject(ProductListStore);
   #cartStore = inject(CartStore);
   #router = inject(Router);
+  #route = inject(ActivatedRoute);
+
+  // inputs
+  @Input() set page(page: string) {
+    this.#productListStore.updateInitialPage(+page);
+  }
+
+  @Input() set limit(limit: string) {
+    this.#productListStore.updateInitialLimit(+limit);
+  }
+
+  @Input() set query(query: string) {
+    this.#productListStore.updateSearchQuery(query);
+  }
 
   // view models
   readonly productListVm$ = this.#productListStore.vm$;
   readonly cartVm$ = this.#cartStore.vm$;
 
   ngOnInit(): void {
-    this.#productListStore.updateInitialPage(0);
-    this.#productListStore.updateInitialLimit(50);
     this.#productListStore.loadProducts();
+
+    this.#route.queryParams.subscribe((params) => {
+      console.log(params);
+    });
   }
 
   trackById(index: number, product: ProductInterface) {
@@ -78,7 +95,7 @@ export class ProductListComponent implements OnInit {
     this.#productListStore.updateCurrentPage(page);
   }
 
-  onChangeSize(size: number) {
-    this.#productListStore.updateProductListSize(size);
+  onChangeLimit(limit: number) {
+    this.#productListStore.updateProductListSize(limit);
   }
 }

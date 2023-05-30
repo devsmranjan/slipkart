@@ -1,5 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 import { debounce } from 'lodash-es';
 import { Observable, switchMap, tap } from 'rxjs';
@@ -45,16 +46,24 @@ export class ProductListStore extends ComponentStore<ProductListState> {
 
   #productService = inject(ProductService);
   #toastStore = inject(ToastStore);
+  #router = inject(Router);
+  #route = inject(ActivatedRoute);
 
   /* --------------------------------- Selectors -------------------------------- */
 
   readonly #products$ = this.select((state) => state.products); // products
   readonly #total$ = this.select((state) => state.total); // total products
   readonly #pageStart$ = this.select((state) => state.pageStart); // page start
-  readonly #page$ = this.select((state) => state.page); // current page
+  readonly #page$ = this.select((state) => state.page).pipe(
+    tap(() => this.updateRouteParams())
+  ); // current page
   readonly #limitStart$ = this.select((state) => state.limitStart); // limit start
-  readonly #limit$ = this.select((state) => state.limit); // limit per page
-  readonly #query$ = this.select((state) => state.query); // search query
+  readonly #limit$ = this.select((state) => state.limit).pipe(
+    tap(() => this.updateRouteParams())
+  ); // limit per page
+  readonly #query$ = this.select((state) => state.query).pipe(
+    tap(() => this.updateRouteParams())
+  ); // search query
   readonly #loading$ = this.select((state) => state.loading); // loading state
   readonly #error$ = this.select((state) => state.error); // error message
 
@@ -217,35 +226,42 @@ export class ProductListStore extends ComponentStore<ProductListState> {
   );
 
   updateInitialPage(page: number) {
+    if (Number.isNaN(page)) {
+      page = initialProductListState.page;
+    }
+
     this.setPageStart(page);
     this.setPage(page);
   }
 
   updateInitialLimit(limit: number) {
+    if (Number.isNaN(limit)) {
+      limit = initialProductListState.limit;
+    }
+
     this.setLimitStart(limit);
     this.setLimit(limit);
   }
 
   // search products
-  searchProducts = debounce(
-    (query: string) => {
-      this.setQuery(query);
-      this.updateInitialPage(initialProductListState.page);
-      this.loadProducts({
-        message: 'Searching...',
-        type: 'info',
-      });
-    },
-    1000,
-    {
-      leading: false,
-      trailing: true,
-    }
-  );
+  updateSearchQuery(query: string) {
+    this.setQuery(query || null);
+  }
+
+  searchProducts = debounce((query: string) => {
+    this.updateSearchQuery(query);
+    this.updateInitialPage(initialProductListState.page);
+
+    this.loadProducts({
+      message: 'Searching...',
+      type: 'info',
+    });
+  }, 1000);
 
   // set page
   updateCurrentPage = debounce((page: number) => {
     this.setPage(page);
+
     this.loadProducts({
       message: 'Updating...',
       type: 'info',
@@ -256,9 +272,20 @@ export class ProductListStore extends ComponentStore<ProductListState> {
   updateProductListSize = debounce((limit: number) => {
     this.setLimit(limit);
     this.setPage(initialProductListState.page);
+
     this.loadProducts({
       message: 'Updating...',
       type: 'info',
     });
   }, 1000);
+
+  updateRouteParams() {
+    const { page, limit, query } = this.get();
+
+    this.#router.navigate([], {
+      relativeTo: this.#route,
+      queryParams: { page, limit, query },
+      queryParamsHandling: 'merge',
+    });
+  }
 }

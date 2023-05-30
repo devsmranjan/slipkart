@@ -1,5 +1,6 @@
 <ng-container *ngIf="productListVm$ | async as productListVm">
   <app-product-list-header
+    [query]="productListVm.query"
     (clickRefresh)="onClickRefresh()"
     (changeSearchQuery)="onChangeSearchQuery($event)"
   />
@@ -33,6 +34,6 @@
     [page]="productListVm.page"
     [total]="productListVm.total"
     (changePage)="onChangePage($event)"
-    (changeSize)="onChangeSize($event)"
+    (changeSize)="onChangeLimit($event)"
   />
 </ng-container>

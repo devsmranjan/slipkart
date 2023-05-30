@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
+  Input,
   Output,
 } from '@angular/core';
 
@@ -15,6 +16,8 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProductListHeaderComponent {
+  @Input() query: string | null = null;
+
   @Output() clickRefresh = new EventEmitter<void>();
   @Output() changeSearchQuery = new EventEmitter<string>();
 
