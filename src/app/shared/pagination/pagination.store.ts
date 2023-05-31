@@ -47,6 +47,12 @@ export class PaginationStore extends ComponentStore<PaginationState> {
 
     return pagesArray;
   });
+  readonly #isOutOfRange$ = this.select(
+    this.#page$,
+    this.#size$,
+    this.#total$,
+    (page) => page > this.#totalPages()
+  );
 
   readonly vm$ = this.select(
     this.#page$,
@@ -57,7 +63,8 @@ export class PaginationStore extends ComponentStore<PaginationState> {
     this.#isLastPage$,
     this.#pages$,
     this.#size$,
-    (page, size, pageSizes, total, isFirstPage, isLastPage, pages, sizes) => ({
+    this.#isOutOfRange$,
+    (
       page,
       size,
       pageSizes,
@@ -66,6 +73,17 @@ export class PaginationStore extends ComponentStore<PaginationState> {
       isLastPage,
       pages,
       sizes,
+      isOutOfRange
+    ) => ({
+      page,
+      size,
+      pageSizes,
+      total,
+      isFirstPage,
+      isLastPage,
+      pages,
+      sizes,
+      isOutOfRange,
     })
   );
 

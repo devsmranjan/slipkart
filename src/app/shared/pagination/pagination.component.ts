@@ -7,7 +7,6 @@ import {
   Output,
   inject,
 } from '@angular/core';
-import { tap } from 'rxjs';
 import { PaginationStore } from './pagination.store';
 
 @Component({
@@ -42,9 +41,7 @@ export class PaginationComponent {
   @Output() changePage = new EventEmitter<number>();
   @Output() changeSize = new EventEmitter<number>();
 
-  readonly vm$ = this.#paginationStore.vm$.pipe(
-    tap((vm) => console.log('PaginationComponent.vm$', vm))
-  );
+  readonly vm$ = this.#paginationStore.vm$;
 
   onClickNext() {
     const page = this.#paginationStore.nextPage();
