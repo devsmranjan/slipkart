@@ -7,7 +7,7 @@ import {
   OnInit,
   inject,
 } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 
 import { PaginationComponent } from '../../../shared/pagination/pagination.component';
 import { CartStore } from '../../../shared/store/cart.store';
@@ -37,7 +37,6 @@ export class ProductListComponent implements OnInit {
   #productListStore = inject(ProductListStore);
   #cartStore = inject(CartStore);
   #router = inject(Router);
-  #route = inject(ActivatedRoute);
 
   // inputs
   @Input() set page(page: string) {
@@ -58,10 +57,6 @@ export class ProductListComponent implements OnInit {
 
   ngOnInit(): void {
     this.#productListStore.loadProducts();
-
-    this.#route.queryParams.subscribe((params) => {
-      console.log(params);
-    });
   }
 
   trackById(index: number, product: ProductInterface) {
