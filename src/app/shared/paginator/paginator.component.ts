@@ -30,11 +30,6 @@ export class PaginatorComponent {
   /* -------------------------------------------------------------------------- */
 
   @Input() set pageIndex(value: string | number) {
-    console.log(
-      '🚀 → PaginatorComponent → @Input → pageIndex -> value:',
-      value
-    );
-
     this.paginatorStore.setPageIndex(value);
   }
 
@@ -43,8 +38,6 @@ export class PaginatorComponent {
   }
 
   @Input() set pageSize(value: string | number) {
-    console.log('🚀 → PaginatorComponent → @Input → pageSize -> value:', value);
-
     this.paginatorStore.setPageSize(+value);
   }
 

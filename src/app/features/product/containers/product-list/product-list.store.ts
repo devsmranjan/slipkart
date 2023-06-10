@@ -61,9 +61,7 @@ export class ProductListStore extends ComponentStore<ProductListState> {
   readonly #page$ = this.select((state) => state.page); // current page
   readonly #sizeStart$ = this.select((state) => state.sizeStart); // size start
   readonly #size$ = this.select((state) => state.size); // size per page
-  readonly #query$ = this.select((state) => state.query).pipe(
-    tap(() => this.updateRouteParams())
-  ); // search query
+  readonly #query$ = this.select((state) => state.query); // search query
   readonly #loading$ = this.select((state) => state.loading); // loading state
   readonly #error$ = this.select((state) => state.error); // error message
 

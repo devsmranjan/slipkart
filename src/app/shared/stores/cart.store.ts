@@ -71,20 +71,37 @@ export class CartStore extends ComponentStore<CartState> {
     }
   );
 
-  readonly updateProductQuantity = this.updater(
-    (state: CartState, payload: { id: number | string; quantity: number }) => {
-      if (payload.quantity < 1) {
+  increaseProductQuantity = this.updater(
+    (state: CartState, cartItem: CartInterface) => {
+      return {
+        ...state,
+        cart: state.cart.map((item) =>
+          item.id === cartItem.id
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
+        ),
+      };
+    }
+  );
+
+  decreaseProductQuantity = this.updater(
+    (state: CartState, cartItem: CartInterface) => {
+      if (!cartItem) {
+        return state;
+      }
+
+      if (cartItem.quantity < 2) {
         return {
           ...state,
-          cart: state.cart.filter((item) => item.id !== payload.id),
+          cart: state.cart.filter((item) => item.id !== cartItem.id),
         };
       }
 
       return {
         ...state,
         cart: state.cart.map((item) =>
-          item.id === payload.id
-            ? { ...item, quantity: payload.quantity }
+          item.id === cartItem.id
+            ? { ...item, quantity: item.quantity - 1 }
             : item
         ),
       };

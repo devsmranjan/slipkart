@@ -30,21 +30,15 @@ export class CartItemListComponent {
   /*                                 Methods                                    */
   /* -------------------------------------------------------------------------- */
 
+  trackById(index: number, item: CartInterface) {
+    return item.id;
+  }
+
   onIncreaseQuantity(item: CartInterface): void {
-    this.#cartStore.updateProductQuantity({
-      id: item.id,
-      quantity: item.quantity + 1,
-    });
+    this.#cartStore.increaseProductQuantity(item);
   }
 
   onDecreaseQuantity(item: CartInterface): void {
-    this.#cartStore.updateProductQuantity({
-      id: item.id,
-      quantity: item.quantity - 1,
-    });
-  }
-
-  trackById(index: number, item: CartInterface) {
-    return item.id;
+    this.#cartStore.decreaseProductQuantity(item);
   }
 }

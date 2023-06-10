@@ -43,8 +43,8 @@ export class ToastStore extends ComponentStore<ToastState> {
   /*                                   Effects                                  */
   /* -------------------------------------------------------------------------- */
 
-  readonly #hideToastWithDelay = this.effect(($) =>
-    $.pipe(
+  readonly #hideToastWithDelay = this.effect((trigger$) =>
+    trigger$.pipe(
       delay(3000),
       map(() => this.#setToast(null))
     )
