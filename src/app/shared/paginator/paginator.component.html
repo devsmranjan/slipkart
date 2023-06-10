@@ -1,0 +1,54 @@
+<div *ngIf="vm$ | async as vm" class="flex gap-4 items-center">
+  <div *ngIf="vm.pageSizeOptions.length > 1">
+    <select
+      class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-20 p-2.5"
+      (change)="changePageSize($any($event.target).value)"
+    >
+      <option
+        *ngFor="let pageSizeOption of vm.pageSizeOptions"
+        [value]="pageSizeOption"
+        [selected]="vm.pageSize === pageSizeOption"
+      >
+        {{ pageSizeOption }}
+      </option>
+    </select>
+  </div>
+
+  <div class="flex gap-4 items-center">
+    <p>
+      {{ vm.rangeLabel }}
+    </p>
+
+    <div class="inline-flex rounded-md shadow-sm">
+      <button
+        aria-current="page"
+        class="px-4 py-2 text-2xl font-medium text-gray-900 bg-white border border-gray-200 rounded-r-md hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 disabled:opacity-50 disabled:cursor-not-allowed disabled:select-none"
+        [disabled]="!vm.hasPreviousPage"
+        (click)="firstPage()"
+      >
+        ⇤
+      </button>
+      <button
+        class="px-4 py-2 text-2xl font-medium text-gray-900 bg-white border border-gray-200 rounded-r-md hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 disabled:opacity-50 disabled:cursor-not-allowed disabled:select-none"
+        [disabled]="!vm.hasPreviousPage"
+        (click)="previousPage()"
+      >
+        ←
+      </button>
+      <button
+        class="px-4 py-2 text-2xl font-medium text-gray-900 bg-white border border-gray-200 rounded-r-md hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 disabled:opacity-50 disabled:cursor-not-allowed disabled:select-none"
+        [disabled]="!vm.hasNextPage"
+        (click)="nextPage()"
+      >
+        →
+      </button>
+      <button
+        class="px-4 py-2 text-2xl font-medium text-gray-900 bg-white border border-gray-200 rounded-r-md hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 disabled:opacity-50 disabled:cursor-not-allowed disabled:select-none"
+        [disabled]="!vm.hasNextPage"
+        (click)="lastPage()"
+      >
+        ⇥
+      </button>
+    </div>
+  </div>
+</div>

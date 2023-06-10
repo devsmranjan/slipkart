@@ -12,7 +12,7 @@ import { ProductService } from '../../product.service';
 
 interface ProductListParams {
   page: number;
-  limit: number;
+  size: number;
   query: string | null;
 }
 
@@ -20,7 +20,7 @@ interface ProductListState extends ProductListParams {
   products: ProductInterface[] | null;
   total: number;
   pageStart: number;
-  limitStart: number;
+  sizeStart: number;
   loading: boolean | null;
   error: string | null;
 }
@@ -30,8 +30,8 @@ const initialProductListState: ProductListState = {
   total: 0,
   pageStart: 0,
   page: 0,
-  limitStart: 10,
-  limit: 10,
+  sizeStart: 10,
+  size: 10,
   query: null,
   loading: null,
   error: null,
@@ -58,13 +58,9 @@ export class ProductListStore extends ComponentStore<ProductListState> {
   readonly #products$ = this.select((state) => state.products); // products
   readonly #total$ = this.select((state) => state.total); // total products
   readonly #pageStart$ = this.select((state) => state.pageStart); // page start
-  readonly #page$ = this.select((state) => state.page).pipe(
-    tap(() => this.updateRouteParams())
-  ); // current page
-  readonly #limitStart$ = this.select((state) => state.limitStart); // limit start
-  readonly #limit$ = this.select((state) => state.limit).pipe(
-    tap(() => this.updateRouteParams())
-  ); // limit per page
+  readonly #page$ = this.select((state) => state.page); // current page
+  readonly #sizeStart$ = this.select((state) => state.sizeStart); // size start
+  readonly #size$ = this.select((state) => state.size); // size per page
   readonly #query$ = this.select((state) => state.query).pipe(
     tap(() => this.updateRouteParams())
   ); // search query
@@ -77,8 +73,8 @@ export class ProductListStore extends ComponentStore<ProductListState> {
     this.#total$,
     this.#pageStart$,
     this.#page$,
-    this.#limitStart$,
-    this.#limit$,
+    this.#sizeStart$,
+    this.#size$,
     this.#query$,
     this.#loading$,
     this.#error$,
@@ -88,8 +84,8 @@ export class ProductListStore extends ComponentStore<ProductListState> {
       total,
       pageStart,
       page,
-      limitStart,
-      limit,
+      sizeStart,
+      size,
       query,
       loading,
       error
@@ -98,8 +94,8 @@ export class ProductListStore extends ComponentStore<ProductListState> {
       total,
       pageStart,
       page,
-      limitStart,
-      limit,
+      sizeStart,
+      size,
       query,
       loading,
       error,
@@ -150,19 +146,17 @@ export class ProductListStore extends ComponentStore<ProductListState> {
     page,
   }));
 
-  readonly setLimitStart = this.updater(
-    (state: ProductListState, limitStart: number) => ({
+  readonly setSizeStart = this.updater(
+    (state: ProductListState, sizeStart: number) => ({
       ...state,
-      limitStart,
+      sizeStart,
     })
   );
 
-  readonly setLimit = this.updater(
-    (state: ProductListState, limit: number) => ({
-      ...state,
-      limit,
-    })
-  );
+  readonly setSize = this.updater((state: ProductListState, size: number) => ({
+    ...state,
+    size,
+  }));
 
   readonly setQuery = this.updater(
     (state: ProductListState, query: string | null) => ({
@@ -181,8 +175,8 @@ export class ProductListStore extends ComponentStore<ProductListState> {
         tap(() => {
           this.setLoading(true);
         }),
-        switchMap(({ limit, page, query }) => {
-          return this.#productService.getProducts(limit, page, query).pipe(
+        switchMap(({ size, page, query }) => {
+          return this.#productService.getProducts(size, page, query).pipe(
             tapResponse(
               (response) => {
                 this.setTotal(response.total);
@@ -213,9 +207,9 @@ export class ProductListStore extends ComponentStore<ProductListState> {
     }
 
     // create subscription for the initial state
-    const { page, limit, query } = this.get();
+    const { page, size, query } = this.get();
 
-    this.#fetchProducts({ page, limit, query });
+    this.#fetchProducts({ page, size, query });
   }
 
   // reload products
@@ -242,19 +236,22 @@ export class ProductListStore extends ComponentStore<ProductListState> {
     this.setPage(page);
   }
 
-  updateInitialLimit(limit: number) {
-    if (Number.isNaN(limit)) {
-      limit = initialProductListState.limit;
+  updateInitialSize(size: number) {
+    if (Number.isNaN(size)) {
+      size = initialProductListState.size;
     }
 
-    this.setLimitStart(limit);
-    this.setLimit(limit);
+    this.setSizeStart(size);
+    this.setSize(size);
   }
 
   // search products
   searchProducts = debounce((query: string) => {
     this.setQuery(query);
     this.updateInitialPage(initialProductListState.page);
+    this.setTotal(initialProductListState.total);
+
+    this.updateRouteParams();
 
     this.loadProducts({
       message: 'Searching...',
@@ -263,19 +260,10 @@ export class ProductListStore extends ComponentStore<ProductListState> {
   }, 1000);
 
   // set page
-  updateCurrentPage = debounce((page: number) => {
+  updatePagination = debounce((page: number, size: number) => {
     this.setPage(page);
-
-    this.loadProducts({
-      message: 'Updating...',
-      type: 'info',
-    });
-  }, 1000);
-
-  // set list size
-  updateProductListSize = debounce((limit: number) => {
-    this.setLimit(limit);
-    this.setPage(initialProductListState.page);
+    this.setSize(size);
+    this.updateRouteParams();
 
     this.loadProducts({
       message: 'Updating...',
@@ -284,11 +272,11 @@ export class ProductListStore extends ComponentStore<ProductListState> {
   }, 1000);
 
   updateRouteParams() {
-    const { page, limit, query } = this.get();
+    const { page, size, query } = this.get();
 
     this.#router.navigate([], {
       relativeTo: this.#route,
-      queryParams: { page, limit, query },
+      queryParams: { page, size, query },
       queryParamsHandling: 'merge',
     });
   }

@@ -3,13 +3,13 @@ import { HttpClientModule } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
   Component,
-  Input,
   OnInit,
   inject,
 } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
-import { PaginationComponent } from '../../../../shared/pagination/pagination.component';
+import { PaginatorComponent } from '../../../../shared/paginator/paginator.component';
+import { PageEvent } from '../../../../shared/paginator/paginator.store';
 import { CartStore } from '../../../../shared/stores';
 import {
   ProductCardComponent,
@@ -27,7 +27,7 @@ import { ProductListStore } from './product-list.store';
     ProductCardComponent,
     HttpClientModule,
     ProductListHeaderComponent,
-    PaginationComponent,
+    PaginatorComponent,
   ],
   templateUrl: './product-list.component.html',
   styleUrls: ['./product-list.component.scss'],
@@ -41,23 +41,8 @@ export class ProductListComponent implements OnInit {
 
   #productListStore = inject(ProductListStore);
   #cartStore = inject(CartStore);
+  #route = inject(ActivatedRoute);
   #router = inject(Router);
-
-  /* -------------------------------------------------------------------------- */
-  /*                                  Inputs                                    */
-  /* -------------------------------------------------------------------------- */
-
-  @Input() set page(page: string) {
-    this.#productListStore.updateInitialPage(+page);
-  }
-
-  @Input() set limit(limit: string) {
-    this.#productListStore.updateInitialLimit(+limit);
-  }
-
-  @Input() set query(query: string) {
-    this.#productListStore.setQuery(query);
-  }
 
   /* -------------------------------------------------------------------------- */
   /*                                  Selectors                                 */
@@ -70,8 +55,20 @@ export class ProductListComponent implements OnInit {
   /*                                 Methods                                    */
   /* -------------------------------------------------------------------------- */
 
+  constructor() {
+    this.updateInitialValues();
+  }
+
   ngOnInit(): void {
     this.#productListStore.loadProducts();
+  }
+
+  updateInitialValues() {
+    let { page, size, query } = this.#route.snapshot.queryParams;
+
+    this.#productListStore.updateInitialPage(+page);
+    this.#productListStore.updateInitialSize(+size);
+    this.#productListStore.setQuery(query);
   }
 
   trackById(index: number, product: ProductInterface) {
@@ -101,11 +98,9 @@ export class ProductListComponent implements OnInit {
   }
 
   // pagination
-  onChangePage(page: number) {
-    this.#productListStore.updateCurrentPage(page);
-  }
+  onChangePagination(event: PageEvent) {
+    console.log('ProductListComponent → onChangePagination → event:', event);
 
-  onChangeLimit(limit: number) {
-    this.#productListStore.updateProductListSize(limit);
+    this.#productListStore.updatePagination(event.pageIndex, event.pageSize);
   }
 }

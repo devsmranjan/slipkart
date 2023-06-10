@@ -23,12 +23,12 @@ export class ProductService {
   /*                                 Methods                                    */
   /* -------------------------------------------------------------------------- */
 
-  getProducts(limit: number, page: number, query: string | null) {
+  getProducts(size: number, page: number, query: string | null) {
     let URL = `${this.#SERVER_URL}/products`;
 
     const params = new URLSearchParams({
-      limit: limit.toString(),
-      skip: (page * limit).toString(),
+      limit: size.toString(),
+      skip: (page * size).toString(),
     });
 
     if (query) {

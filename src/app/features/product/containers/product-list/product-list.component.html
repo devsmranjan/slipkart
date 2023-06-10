@@ -28,12 +28,14 @@
     </ng-template>
   </div>
 
-  <app-pagination
-    [initialPage]="productListVm.pageStart"
-    [initialSize]="productListVm.limit"
-    [page]="productListVm.page"
-    [total]="productListVm.total"
-    (changePage)="onChangePage($event)"
-    (changeSize)="onChangeLimit($event)"
-  />
+  <div class="p-4 flex justify-center">
+    <paginator
+      *ngIf="productListVm.total"
+      [total]="productListVm.total"
+      [pageSize]="productListVm.sizeStart"
+      [pageSizeOptions]="[5, 10, 25, 100]"
+      [pageIndex]="productListVm.pageStart"
+      (page)="onChangePagination($event)"
+    />
+  </div>
 </ng-container>
