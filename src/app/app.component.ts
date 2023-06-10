@@ -5,12 +5,12 @@ import { RouterOutlet } from '@angular/router';
 import { NavbarComponent } from './core/containers/navbar/navbar.component';
 import { CartStore } from './shared/store/cart.store';
 import { ToastStore } from './shared/store/toast.store';
-import { ToastShellComponent } from './toast/containers/toast-shell/toast-shell.component';
+import { ToastComponent } from './toast/toast.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, NavbarComponent, ToastShellComponent],
+  imports: [CommonModule, RouterOutlet, NavbarComponent, ToastComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
   providers: [CartStore, ToastStore],

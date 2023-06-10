@@ -1,17 +1,16 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-
-import { ToastStore } from '../../../shared/store/toast.store';
+import { ToastStore } from '../shared/store/toast.store';
 
 @Component({
-  selector: 'app-toast-shell',
+  selector: 'app-toast',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './toast-shell.component.html',
-  styleUrls: ['./toast-shell.component.scss'],
+  templateUrl: './toast.component.html',
+  styleUrls: ['./toast.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ToastShellComponent {
+export class ToastComponent {
   /* -------------------------------------------------------------------------- */
   /*                                   Injects                                  */
   /* -------------------------------------------------------------------------- */

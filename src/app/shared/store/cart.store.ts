@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import { v4 as uuid4 } from 'uuid';
 
-import { ProductInterface } from '../../products/models';
+import { ProductInterface } from '../../product/models';
 import { CartInterface } from '../models/cart.model';
 
 interface CartState {

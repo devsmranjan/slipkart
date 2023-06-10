@@ -1,11 +1,11 @@
 import { Route } from '@angular/router';
 
-import { ProductShellComponent } from './containers/product-shell/product-shell.component';
+import { ProductComponent } from './product.component';
 
 export const PRODUCT_ROUTES: Route[] = [
   {
     path: '',
-    component: ProductShellComponent,
+    component: ProductComponent,
     children: [
       {
         path: '',

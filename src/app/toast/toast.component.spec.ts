@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CartShellComponent } from './cart-shell.component';
+import { ToastComponent } from './toast.component';
 
-describe('CartShellComponent', () => {
-  let component: CartShellComponent;
-  let fixture: ComponentFixture<CartShellComponent>;
+describe('ToastComponent', () => {
+  let component: ToastComponent;
+  let fixture: ComponentFixture<ToastComponent>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [CartShellComponent]
+      imports: [ToastComponent]
     });
-    fixture = TestBed.createComponent(CartShellComponent);
+    fixture = TestBed.createComponent(ToastComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
