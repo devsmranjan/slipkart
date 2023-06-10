@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { ToastStore } from '../shared/store/toast.store';
+
+import { ToastStore } from '../../shared/stores';
 
 @Component({
   selector: 'app-toast',

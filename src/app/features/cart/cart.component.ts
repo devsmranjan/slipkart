@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { CartCalculationComponent } from './containers/cart-calculation/cart-calculation.component';
-import { CartItemListComponent } from './containers/cart-item-list/cart-item-list.component';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+
+import { CartCalculationComponent, CartItemListComponent } from './containers';
 
 @Component({
   selector: 'app-cart',
@@ -9,5 +9,6 @@ import { CartItemListComponent } from './containers/cart-item-list/cart-item-lis
   imports: [CommonModule, CartItemListComponent, CartCalculationComponent],
   templateUrl: './cart.component.html',
   styleUrls: ['./cart.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CartComponent {}

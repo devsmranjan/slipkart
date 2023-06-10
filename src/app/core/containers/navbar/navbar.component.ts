@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { CartStore } from '../../../shared/store/cart.store';
+import { CartStore } from '../../../shared/stores/cart.store';
 
 @Component({
   selector: 'app-navbar',

@@ -7,7 +7,7 @@ import {
   Output,
 } from '@angular/core';
 
-import { CartInterface } from '../../../shared/models/cart.model';
+import { CartInterface } from '../../../../shared/models';
 
 @Component({
   selector: 'app-cart-item',

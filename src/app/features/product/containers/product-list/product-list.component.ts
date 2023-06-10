@@ -9,10 +9,12 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { PaginationComponent } from '../../../shared/pagination/pagination.component';
-import { CartStore } from '../../../shared/store/cart.store';
-import { ProductCardComponent } from '../../components/product-card/product-card.component';
-import { ProductListHeaderComponent } from '../../components/product-list-header/product-list-header.component';
+import { PaginationComponent } from '../../../../shared/pagination/pagination.component';
+import { CartStore } from '../../../../shared/stores';
+import {
+  ProductCardComponent,
+  ProductListHeaderComponent,
+} from '../../components';
 import { ProductInterface } from '../../models';
 import { ProductService } from '../../product.service';
 import { ProductListStore } from './product-list.store';

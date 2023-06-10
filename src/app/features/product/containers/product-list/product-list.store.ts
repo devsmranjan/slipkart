@@ -5,8 +5,8 @@ import { ComponentStore, tapResponse } from '@ngrx/component-store';
 import { debounce } from 'lodash-es';
 import { Observable, switchMap, tap } from 'rxjs';
 
-import { ToastInterface } from '../../../shared/models/toast.model';
-import { ToastStore } from '../../../shared/store/toast.store';
+import { ToastInterface } from '../../../../shared/models';
+import { ToastStore } from '../../../../shared/stores';
 import { ProductInterface } from '../../models';
 import { ProductService } from '../../product.service';
 

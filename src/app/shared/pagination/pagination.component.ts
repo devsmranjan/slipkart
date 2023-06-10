@@ -7,6 +7,7 @@ import {
   Output,
   inject,
 } from '@angular/core';
+
 import { PaginationStore } from './pagination.store';
 
 @Component({

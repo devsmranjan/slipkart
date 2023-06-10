@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import { Observable, delay, map } from 'rxjs';
 
-import { ToastInterface } from '../models/toast.model';
+import { ToastInterface } from '../models';
 
 interface ToastState {
   toast: ToastInterface | null;

@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 
-import { CartStore } from '../../../shared/store/cart.store';
+import { CartStore } from '../../../../shared/stores';
 
 @Component({
   selector: 'app-cart-calculation',

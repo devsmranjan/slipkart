@@ -1,4 +1,4 @@
-import { ProductInterface } from '../../product/models';
+import { ProductInterface } from '../../features/product/models';
 
 export interface CartInterface {
   id: number | string;

@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 
-import { CartInterface } from '../../../shared/models/cart.model';
-import { CartStore } from '../../../shared/store/cart.store';
-import { CartItemComponent } from '../../components/cart-item/cart-item.component';
+import { CartInterface } from '../../../../shared/models';
+import { CartStore } from '../../../../shared/stores';
+import { CartItemComponent } from '../../components';
 
 @Component({
   selector: 'app-cart-item-list',
