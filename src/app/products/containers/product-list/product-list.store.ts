@@ -42,14 +42,18 @@ export class ProductListStore extends ComponentStore<ProductListState> {
     super(initialProductListState);
   }
 
-  /* --------------------------------- Injects -------------------------------- */
+  /* -------------------------------------------------------------------------- */
+  /*                                   Injects                                  */
+  /* -------------------------------------------------------------------------- */
 
   #productService = inject(ProductService);
   #toastStore = inject(ToastStore);
   #router = inject(Router);
   #route = inject(ActivatedRoute);
 
-  /* --------------------------------- Selectors -------------------------------- */
+  /* -------------------------------------------------------------------------- */
+  /*                                  Selectors                                 */
+  /* -------------------------------------------------------------------------- */
 
   readonly #products$ = this.select((state) => state.products); // products
   readonly #total$ = this.select((state) => state.total); // total products
@@ -66,8 +70,6 @@ export class ProductListStore extends ComponentStore<ProductListState> {
   ); // search query
   readonly #loading$ = this.select((state) => state.loading); // loading state
   readonly #error$ = this.select((state) => state.error); // error message
-
-  /* --------------------------- Combined Selectors --------------------------- */
 
   // view models
   readonly vm$ = this.select(
@@ -104,7 +106,9 @@ export class ProductListStore extends ComponentStore<ProductListState> {
     })
   );
 
-  /* --------------------------------- Updaters -------------------------------- */
+  /* -------------------------------------------------------------------------- */
+  /*                                  Updaters                                  */
+  /* -------------------------------------------------------------------------- */
 
   readonly setProducts = this.updater(
     (state: ProductListState, products: ProductInterface[] | null) => ({
@@ -163,11 +167,13 @@ export class ProductListStore extends ComponentStore<ProductListState> {
   readonly setQuery = this.updater(
     (state: ProductListState, query: string | null) => ({
       ...state,
-      query,
+      query: query || null,
     })
   );
 
-  /* --------------------------------- Effects -------------------------------- */
+  /* -------------------------------------------------------------------------- */
+  /*                                   Effects                                  */
+  /* -------------------------------------------------------------------------- */
 
   readonly #fetchProducts = this.effect(
     (params$: Observable<ProductListParams>) =>
@@ -196,7 +202,9 @@ export class ProductListStore extends ComponentStore<ProductListState> {
       )
   );
 
-  /* --------------------------------- Methods -------------------------------- */
+  /* -------------------------------------------------------------------------- */
+  /*                                   Methods                                  */
+  /* -------------------------------------------------------------------------- */
 
   // load products if not loaded yet
   loadProducts(toast: ToastInterface | null = null) {
@@ -244,12 +252,8 @@ export class ProductListStore extends ComponentStore<ProductListState> {
   }
 
   // search products
-  updateSearchQuery(query: string) {
-    this.setQuery(query || null);
-  }
-
   searchProducts = debounce((query: string) => {
-    this.updateSearchQuery(query);
+    this.setQuery(query);
     this.updateInitialPage(initialProductListState.page);
 
     this.loadProducts({

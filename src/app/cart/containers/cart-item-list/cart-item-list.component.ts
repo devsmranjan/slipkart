@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+
 import { CartInterface } from '../../../shared/models/cart.model';
 import { CartStore } from '../../../shared/store/cart.store';
 import { CartItemComponent } from '../../components/cart-item/cart-item.component';
@@ -13,13 +14,22 @@ import { CartItemComponent } from '../../components/cart-item/cart-item.componen
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CartItemListComponent {
-  // injects
+  /* -------------------------------------------------------------------------- */
+  /*                                   Injects                                  */
+  /* -------------------------------------------------------------------------- */
+
   #cartStore = inject(CartStore);
 
-  // props
+  /* -------------------------------------------------------------------------- */
+  /*                                  Selectors                                 */
+  /* -------------------------------------------------------------------------- */
+
   readonly cartVm$ = this.#cartStore.vm$;
 
-  // methods
+  /* -------------------------------------------------------------------------- */
+  /*                                 Methods                                    */
+  /* -------------------------------------------------------------------------- */
+
   onIncreaseQuantity(item: CartInterface): void {
     this.#cartStore.updateProductQuantity({
       id: item.id,

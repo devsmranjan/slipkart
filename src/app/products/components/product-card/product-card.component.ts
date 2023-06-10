@@ -1,4 +1,5 @@
 import { CommonModule } from '@angular/common';
+
 import {
   ChangeDetectionStrategy,
   Component,
@@ -17,12 +18,23 @@ import { ProductInterface } from '../../models';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProductCardComponent {
+  /* -------------------------------------------------------------------------- */
+  /*                                   Inputs                                   */
+  /* -------------------------------------------------------------------------- */
+
   @Input({ required: true }) product!: ProductInterface;
   @Input() addedToCart = false;
 
-  // outputs
+  /* -------------------------------------------------------------------------- */
+  /*                                  Outputs                                   */
+  /* -------------------------------------------------------------------------- */
+
   @Output() clickAddToCart = new EventEmitter<void>();
   @Output() clickRemoveFromCart = new EventEmitter<void>();
+
+  /* -------------------------------------------------------------------------- */
+  /*                                 Methods                                    */
+  /* -------------------------------------------------------------------------- */
 
   onClickAddToCart(event: Event): void {
     event.stopPropagation();

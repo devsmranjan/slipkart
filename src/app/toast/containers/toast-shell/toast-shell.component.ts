@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+
 import { ToastStore } from '../../../shared/store/toast.store';
 
 @Component({
@@ -11,9 +12,15 @@ import { ToastStore } from '../../../shared/store/toast.store';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ToastShellComponent {
-  // injects
+  /* -------------------------------------------------------------------------- */
+  /*                                   Injects                                  */
+  /* -------------------------------------------------------------------------- */
+
   #toastStore = inject(ToastStore);
 
-  // selectors
+  /* -------------------------------------------------------------------------- */
+  /*                                  Selectors                                 */
+  /* -------------------------------------------------------------------------- */
+
   readonly toastVm$ = this.#toastStore.vm$;
 }

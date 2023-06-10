@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
+
 import { CartStore } from '../../../shared/store/cart.store';
 
 @Component({
@@ -9,18 +10,26 @@ import { CartStore } from '../../../shared/store/cart.store';
   imports: [CommonModule],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss'],
-  providers: [],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NavbarComponent {
-  // injects
+  /* -------------------------------------------------------------------------- */
+  /*                                   Injects                                  */
+  /* -------------------------------------------------------------------------- */
+
   #cartStore = inject(CartStore);
   #router = inject(Router);
 
-  // props
+  /* -------------------------------------------------------------------------- */
+  /*                                  Selectors                                 */
+  /* -------------------------------------------------------------------------- */
+
   readonly cartVm$ = this.#cartStore.vm$;
 
-  // methods
+  /* -------------------------------------------------------------------------- */
+  /*                                 Methods                                    */
+  /* -------------------------------------------------------------------------- */
+
   onCartClick(): void {
     this.#router.navigate(['cart']);
   }

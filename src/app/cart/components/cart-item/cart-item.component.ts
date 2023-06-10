@@ -6,6 +6,7 @@ import {
   Input,
   Output,
 } from '@angular/core';
+
 import { CartInterface } from '../../../shared/models/cart.model';
 
 @Component({
@@ -17,10 +18,22 @@ import { CartInterface } from '../../../shared/models/cart.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CartItemComponent {
+  /* -------------------------------------------------------------------------- */
+  /*                                   Inputs                                   */
+  /* -------------------------------------------------------------------------- */
+
   @Input({ required: true }) item!: CartInterface;
+
+  /* -------------------------------------------------------------------------- */
+  /*                                  Outputs                                   */
+  /* -------------------------------------------------------------------------- */
 
   @Output() increaseQuantity = new EventEmitter<number>();
   @Output() decreaseQuantity = new EventEmitter<number>();
+
+  /* -------------------------------------------------------------------------- */
+  /*                                 Methods                                    */
+  /* -------------------------------------------------------------------------- */
 
   onIncreaseQuantity(): void {
     this.increaseQuantity.emit();

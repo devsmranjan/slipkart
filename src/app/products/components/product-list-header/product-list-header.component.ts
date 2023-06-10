@@ -16,10 +16,22 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProductListHeaderComponent {
+  /* -------------------------------------------------------------------------- */
+  /*                                   Inputs                                   */
+  /* -------------------------------------------------------------------------- */
+
   @Input() query: string | null = null;
+
+  /* -------------------------------------------------------------------------- */
+  /*                                  Outputs                                   */
+  /* -------------------------------------------------------------------------- */
 
   @Output() clickRefresh = new EventEmitter<void>();
   @Output() changeSearchQuery = new EventEmitter<string>();
+
+  /* -------------------------------------------------------------------------- */
+  /*                                 Methods                                    */
+  /* -------------------------------------------------------------------------- */
 
   onClickRefresh() {
     this.clickRefresh.emit();

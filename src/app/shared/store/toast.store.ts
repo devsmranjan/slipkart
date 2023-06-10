@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import { Observable, delay, map } from 'rxjs';
+
 import { ToastInterface } from '../models/toast.model';
 
 interface ToastState {
@@ -17,30 +18,35 @@ export class ToastStore extends ComponentStore<ToastState> {
     super(initialState);
   }
 
+  /* -------------------------------------------------------------------------- */
+  /*                                  Selectors                                 */
+  /* -------------------------------------------------------------------------- */
+
   readonly #toast$ = this.select((state) => state.toast);
 
   readonly vm$ = this.select(this.#toast$, (toast) => ({
     toast,
   }));
 
-  readonly #setToast = this.updater((state, toast: ToastInterface) => {
+  /* -------------------------------------------------------------------------- */
+  /*                                  Updaters                                  */
+  /* -------------------------------------------------------------------------- */
+
+  readonly #setToast = this.updater((state, toast: ToastInterface | null) => {
     return {
       ...state,
       toast,
     };
   });
 
-  readonly hideToast = this.updater((state) => {
-    return {
-      ...state,
-      toast: null,
-    };
-  });
+  /* -------------------------------------------------------------------------- */
+  /*                                   Effects                                  */
+  /* -------------------------------------------------------------------------- */
 
-  readonly #hideToastWithDelay = this.effect((trigger$) =>
-    trigger$.pipe(
+  readonly #hideToastWithDelay = this.effect(($) =>
+    $.pipe(
       delay(3000),
-      map(() => this.hideToast())
+      map(() => this.#setToast(null))
     )
   );
 
@@ -54,11 +60,20 @@ export class ToastStore extends ComponentStore<ToastState> {
       )
   );
 
+  /* -------------------------------------------------------------------------- */
+  /*                                   Methods                                  */
+  /* -------------------------------------------------------------------------- */
+
   showToast(toast: ToastInterface) {
     if (toast.autoHide) {
       this.#showAndHideToast(toast);
-    } else {
-      this.#setToast(toast);
+      return;
     }
+
+    this.#setToast(toast);
+  }
+
+  hideToast() {
+    this.#setToast(null);
   }
 }

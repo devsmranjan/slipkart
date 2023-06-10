@@ -33,12 +33,18 @@ import { ProductListStore } from './product-list.store';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProductListComponent implements OnInit {
-  // injects
+  /* -------------------------------------------------------------------------- */
+  /*                                   Injects                                  */
+  /* -------------------------------------------------------------------------- */
+
   #productListStore = inject(ProductListStore);
   #cartStore = inject(CartStore);
   #router = inject(Router);
 
-  // inputs
+  /* -------------------------------------------------------------------------- */
+  /*                                  Inputs                                    */
+  /* -------------------------------------------------------------------------- */
+
   @Input() set page(page: string) {
     this.#productListStore.updateInitialPage(+page);
   }
@@ -48,12 +54,19 @@ export class ProductListComponent implements OnInit {
   }
 
   @Input() set query(query: string) {
-    this.#productListStore.updateSearchQuery(query);
+    this.#productListStore.setQuery(query);
   }
 
-  // view models
+  /* -------------------------------------------------------------------------- */
+  /*                                  Selectors                                 */
+  /* -------------------------------------------------------------------------- */
+
   readonly productListVm$ = this.#productListStore.vm$;
   readonly cartVm$ = this.#cartStore.vm$;
+
+  /* -------------------------------------------------------------------------- */
+  /*                                 Methods                                    */
+  /* -------------------------------------------------------------------------- */
 
   ngOnInit(): void {
     this.#productListStore.loadProducts();
@@ -68,11 +81,11 @@ export class ProductListComponent implements OnInit {
   }
 
   onClickAddToCart(product: ProductInterface) {
-    this.#cartStore.addProductToCart(product);
+    this.#cartStore.addProduct(product);
   }
 
   onClickRemoveFromCart(product: ProductInterface) {
-    this.#cartStore.removeProductFromCart(product.id);
+    this.#cartStore.removeProduct(product.id);
   }
 
   // refresh

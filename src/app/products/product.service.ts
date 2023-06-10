@@ -1,16 +1,27 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
+
 import { ProductInterface, ProductResponseInterface } from './models';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ProductService {
-  // injects
+  /* -------------------------------------------------------------------------- */
+  /*                                   Injects                                  */
+  /* -------------------------------------------------------------------------- */
+
   #http = inject(HttpClient);
 
-  // constants
+  /* -------------------------------------------------------------------------- */
+  /*                                  Properties                                */
+  /* -------------------------------------------------------------------------- */
+
   #SERVER_URL: string = 'https://dummyjson.com';
+
+  /* -------------------------------------------------------------------------- */
+  /*                                 Methods                                    */
+  /* -------------------------------------------------------------------------- */
 
   getProducts(limit: number, page: number, query: string | null) {
     let URL = `${this.#SERVER_URL}/products`;

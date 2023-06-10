@@ -19,6 +19,10 @@ export class PaginationStore extends ComponentStore<PaginationState> {
     super(initialState);
   }
 
+  /* -------------------------------------------------------------------------- */
+  /*                                  Selectors                                 */
+  /* -------------------------------------------------------------------------- */
+
   readonly #pageSizes$ = this.select((state) => state.pageSizes);
   readonly #size$ = this.select((state) => {
     const size = state.size;
@@ -87,6 +91,10 @@ export class PaginationStore extends ComponentStore<PaginationState> {
     })
   );
 
+  /* -------------------------------------------------------------------------- */
+  /*                                   Updaters                                 */
+  /* -------------------------------------------------------------------------- */
+
   readonly setPage = this.updater((state, page: number) => ({
     ...state,
     page,
@@ -101,6 +109,10 @@ export class PaginationStore extends ComponentStore<PaginationState> {
     ...state,
     total,
   }));
+
+  /* -------------------------------------------------------------------------- */
+  /*                                   Methods                                  */
+  /* -------------------------------------------------------------------------- */
 
   #totalPages() {
     return Math.ceil(this.get().total / this.get().size);

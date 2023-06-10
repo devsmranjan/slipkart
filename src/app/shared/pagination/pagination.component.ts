@@ -19,8 +19,15 @@ import { PaginationStore } from './pagination.store';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PaginationComponent {
-  // injects
+  /* -------------------------------------------------------------------------- */
+  /*                                   Injects                                  */
+  /* -------------------------------------------------------------------------- */
+
   #paginationStore = inject(PaginationStore);
+
+  /* -------------------------------------------------------------------------- */
+  /*                                   Inputs                                   */
+  /* -------------------------------------------------------------------------- */
 
   @Input() set initialPage(page: number) {
     this.#paginationStore.setPage(page);
@@ -38,10 +45,22 @@ export class PaginationComponent {
     this.#paginationStore.setTotal(total);
   }
 
+  /* -------------------------------------------------------------------------- */
+  /*                                  Outputs                                   */
+  /* -------------------------------------------------------------------------- */
+
   @Output() changePage = new EventEmitter<number>();
   @Output() changeSize = new EventEmitter<number>();
 
+  /* -------------------------------------------------------------------------- */
+  /*                                  Selectors                                 */
+  /* -------------------------------------------------------------------------- */
+
   readonly vm$ = this.#paginationStore.vm$;
+
+  /* -------------------------------------------------------------------------- */
+  /*                                 Methods                                    */
+  /* -------------------------------------------------------------------------- */
 
   onClickNext() {
     const page = this.#paginationStore.nextPage();

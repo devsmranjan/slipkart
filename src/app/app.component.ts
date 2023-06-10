@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+
 import { NavbarComponent } from './core/containers/navbar/navbar.component';
 import { CartStore } from './shared/store/cart.store';
 import { ToastStore } from './shared/store/toast.store';

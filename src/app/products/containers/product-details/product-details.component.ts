@@ -6,6 +6,7 @@ import {
   Input,
   inject,
 } from '@angular/core';
+
 import { CartStore } from '../../../shared/store/cart.store';
 import { ProductInterface } from '../../models';
 import { ProductService } from '../../product.service';
@@ -21,28 +22,40 @@ import { ProductDetailsStore } from './product-details.store';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProductDetailsComponent {
-  // injects
+  /* -------------------------------------------------------------------------- */
+  /*                                   Injects                                  */
+  /* -------------------------------------------------------------------------- */
+
   #productDetailsStore = inject(ProductDetailsStore);
   #cartStore = inject(CartStore);
 
-  // setters
+  /* -------------------------------------------------------------------------- */
+  /*                                  Inputs                                    */
+  /* -------------------------------------------------------------------------- */
   @Input() set id(id: string) {
     this.loadProduct(id);
   }
 
+  /* -------------------------------------------------------------------------- */
+  /*                                  Selectors                                 */
+  /* -------------------------------------------------------------------------- */
+
   productDetailsVm$ = this.#productDetailsStore.vm$;
   cartVm$ = this.#cartStore.vm$;
 
-  // dispatchers
+  /* -------------------------------------------------------------------------- */
+  /*                                 Methods                                    */
+  /* -------------------------------------------------------------------------- */
+
   loadProduct(id: string) {
     this.#productDetailsStore.loadProduct(id);
   }
 
   onClickAddToCart(product: ProductInterface) {
-    this.#cartStore.addProductToCart(product);
+    this.#cartStore.addProduct(product);
   }
 
   onClickRemoveFromCart(product: ProductInterface) {
-    this.#cartStore.removeProductFromCart(product.id);
+    this.#cartStore.removeProduct(product.id);
   }
 }

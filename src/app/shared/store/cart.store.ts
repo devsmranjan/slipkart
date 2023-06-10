@@ -1,7 +1,7 @@
+import { Injectable } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import { v4 as uuid4 } from 'uuid';
 
-import { Injectable } from '@angular/core';
 import { ProductInterface } from '../../products/models';
 import { CartInterface } from '../models/cart.model';
 
@@ -19,25 +19,22 @@ export class CartStore extends ComponentStore<CartState> {
     super(initialState);
   }
 
-  /* -------------------------------- Selectors ------------------------------- */
+  /* -------------------------------------------------------------------------- */
+  /*                                  Selectors                                 */
+  /* -------------------------------------------------------------------------- */
 
   readonly #cart$ = this.select((state) => state.cart);
-
   readonly #cartCount$ = this.select(this.#cart$, (cart) =>
     cart.reduce((acc, item) => acc + item.quantity, 0)
   );
-
   readonly #hasProduct$ = this.select(
     this.#cart$,
     (cart) => (product: ProductInterface) =>
       cart.some((item) => item.product.id === product.id)
   );
-
   readonly #cartValue$ = this.select(this.#cart$, (cart) =>
     cart.reduce((acc, item) => acc + item.product.price * item.quantity, 0)
   );
-
-  /* ------------------------------- View Models ------------------------------ */
 
   readonly vm$ = this.select(
     this.#cart$,
@@ -52,9 +49,11 @@ export class CartStore extends ComponentStore<CartState> {
     })
   );
 
-  /* --------------------------------- Updaters ------------------------------- */
+  /* -------------------------------------------------------------------------- */
+  /*                                  Updaters                                  */
+  /* -------------------------------------------------------------------------- */
 
-  readonly addProductToCart = this.updater(
+  readonly addProduct = this.updater(
     (state: CartState, product: ProductInterface) => {
       return {
         ...state,
@@ -63,7 +62,7 @@ export class CartStore extends ComponentStore<CartState> {
     }
   );
 
-  readonly removeProductFromCart = this.updater(
+  readonly removeProduct = this.updater(
     (state: CartState, productId: number | string) => {
       return {
         ...state,

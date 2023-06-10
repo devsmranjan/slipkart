@@ -1,4 +1,5 @@
 import { Route } from '@angular/router';
+
 import { ProductShellComponent } from './containers/product-shell/product-shell.component';
 
 export const PRODUCT_ROUTES: Route[] = [

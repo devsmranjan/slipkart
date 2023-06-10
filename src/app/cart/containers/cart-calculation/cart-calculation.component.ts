@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+
 import { CartStore } from '../../../shared/store/cart.store';
 
 @Component({
@@ -11,9 +12,15 @@ import { CartStore } from '../../../shared/store/cart.store';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CartCalculationComponent {
-  // injects
+  /* -------------------------------------------------------------------------- */
+  /*                                   Injects                                  */
+  /* -------------------------------------------------------------------------- */
+
   #cartStore = inject(CartStore);
 
-  // props
+  /* -------------------------------------------------------------------------- */
+  /*                                  Selectors                                 */
+  /* -------------------------------------------------------------------------- */
+
   readonly cartVm$ = this.#cartStore.vm$;
 }

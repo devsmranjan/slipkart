@@ -22,8 +22,15 @@ export class ProductDetailsStore extends ComponentStore<ProductDetailsState> {
     super(initialState);
   }
 
-  // inject
+  /* -------------------------------------------------------------------------- */
+  /*                                   Injects                                  */
+  /* -------------------------------------------------------------------------- */
+
   readonly #productService = inject(ProductService);
+
+  /* -------------------------------------------------------------------------- */
+  /*                                  Selectors                                 */
+  /* -------------------------------------------------------------------------- */
 
   readonly #product$ = this.select((state) => state.product);
   readonly #loading$ = this.select((state) => state.loading);
@@ -39,6 +46,10 @@ export class ProductDetailsStore extends ComponentStore<ProductDetailsState> {
       error,
     })
   );
+
+  /* -------------------------------------------------------------------------- */
+  /*                                   Updaters                                 */
+  /* -------------------------------------------------------------------------- */
 
   readonly setProduct = this.updater(
     (state: ProductDetailsState, product: ProductInterface | null) => ({
@@ -60,6 +71,10 @@ export class ProductDetailsStore extends ComponentStore<ProductDetailsState> {
       error,
     })
   );
+
+  /* -------------------------------------------------------------------------- */
+  /*                                   Effects                                  */
+  /* -------------------------------------------------------------------------- */
 
   readonly loadProduct = this.effect((id$: Observable<number | string>) => {
     return id$.pipe(
