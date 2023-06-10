@@ -4,7 +4,7 @@
     (clickRefresh)="onClickRefresh()"
     (changeSearchQuery)="onChangeSearchQuery($event)"
   />
-  <div class="products">
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
     <ng-container *ngIf="productListVm.products; else placeholder">
       <ng-container *ngIf="productListVm.products.length > 0; else noData">
         <app-product-card

@@ -1,4 +1,4 @@
-<div *ngIf="cartVm$ | async as cartVm">
+<div *ngIf="cartVm$ | async as cartVm" class="grid gap-4">
   <app-cart-item
     *ngFor="let item of cartVm.cart; trackBy: trackById"
     [item]="item"
