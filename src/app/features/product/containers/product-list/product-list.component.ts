@@ -60,14 +60,14 @@ export class ProductListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.#productListStore.loadProducts();
+    this.#productListStore.fetchProducts(this.#productListStore.params$);
   }
 
   updateInitialValues() {
     let { page, size, query } = this.#route.snapshot.queryParams;
 
-    this.#productListStore.updateInitialPage(+page);
-    this.#productListStore.updateInitialSize(+size);
+    this.#productListStore.setInitialPage(+page);
+    this.#productListStore.setInitialSize(+size);
     this.#productListStore.setQuery(query);
   }
 
@@ -94,13 +94,16 @@ export class ProductListComponent implements OnInit {
 
   // search
   onChangeSearchQuery(query: string) {
-    this.#productListStore.searchProducts(query);
+    this.#productListStore.setSearchQuery(query);
   }
 
   // pagination
   onChangePagination(event: PageEvent) {
     console.log('ProductListComponent → onChangePagination → event:', event);
 
-    this.#productListStore.updatePagination(event.pageIndex, event.pageSize);
+    this.#productListStore.setPagination({
+      page: event.pageIndex,
+      size: event.pageSize,
+    });
   }
 }
